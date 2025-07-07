@@ -74,6 +74,11 @@ export default function Home() {
               </Link>
             </Button>
             <Button size="lg" variant="outline" asChild className="gap-2">
+              <Link href="/docs">
+                📚 Documentation
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" asChild className="gap-2">
               <Link href="https://github.com" target="_blank">
                 <Github className="h-4 w-4" />
                 View Source
