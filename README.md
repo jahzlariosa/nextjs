@@ -1,33 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js 15 + Supabase SSR Authentication
 
-## Getting Started
+A modern, server-first Next.js application with Supabase SSR authentication, automatic user profile creation, Shadcn UI, and robust error handling.
 
-First, run the development server:
+## ✨ Features
+
+- **🔐 Complete Authentication Flow**: Sign-up, sign-in, sign-out, password reset
+- **👤 Automatic Profile Creation**: Database triggers create user profiles on sign-up
+- **🎨 Modern UI**: Shadcn UI components with Tailwind CSS
+- **🔄 Server-Side Rendering**: Full SSR support with Supabase
+- **📱 Toast Notifications**: Sonner integration for user feedback
+- **🛡️ Robust Error Handling**: Comprehensive error handling and user messaging
+- **⚡ Real-time Validation**: Username availability, password strength
+- **📊 Code Splitting**: Optimized component architecture
+
+## 🚀 Quick Start
 
 ```bash
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Add your Supabase credentials
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📚 Documentation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Comprehensive documentation is available in the [`/docs`](./docs/) directory:
 
-## Learn More
+- **[📖 Quick Start Guide](./docs/guides/QUICK_START.md)** - Get up and running
+- **[🔧 Development Guide](./docs/development/DEVELOPMENT_GUIDE.md)** - Development setup
+- **[🏗️ Authentication Workflow](./docs/architecture/AUTHENTICATION_WORKFLOW.md)** - Auth system overview
+- **[🧪 Testing Guide](./docs/guides/TESTING_GUIDE.md)** - Testing instructions
+- **[🔧 Troubleshooting](./docs/troubleshooting/)** - Common issues and fixes
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Framework**: Next.js 15 (App Router)
+- **Authentication**: Supabase Auth with SSR
+- **Database**: Supabase PostgreSQL
+- **UI Components**: Shadcn UI + Radix UI
+- **Styling**: Tailwind CSS
+- **Forms**: React Hook Form + Zod
+- **Notifications**: Sonner
+- **TypeScript**: Full type safety
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📁 Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── (auth)/            # Authentication pages
+│   ├── auth/              # Auth callbacks & API
+│   └── (dashboard)/       # Protected pages
+├── components/            # Reusable components
+│   ├── auth/              # Auth-specific components
+│   ├── ui/                # Shadcn UI components
+│   └── skeletons/         # Loading skeletons
+├── lib/                   # Utilities & configurations
+│   ├── supabase/          # Supabase clients
+│   └── notifications.ts   # Centralized notifications
+└── middleware.ts          # Auth middleware
+```
+
+## 🚀 Deployment
+
+This project is optimized for deployment on Vercel:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/next.js/tree/canary/examples/hello-world)
+
+## 📝 Contributing
+
+1. Check the [Development Guide](./docs/development/DEVELOPMENT_GUIDE.md)
+2. Review the [Project Status](./docs/development/PROJECT_STATUS.md) 
+3. Follow the testing guidelines in [Testing Guide](./docs/guides/TESTING_GUIDE.md)
+
+## 📄 License
+
+This project is licensed under the MIT License.
 
 ## Deploy on Vercel
 
