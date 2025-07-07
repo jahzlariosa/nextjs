@@ -6,12 +6,14 @@ A modern, server-first Next.js application with Supabase SSR authentication, aut
 
 - **🔐 Complete Authentication Flow**: Sign-up, sign-in, sign-out, password reset
 - **👤 Automatic Profile Creation**: Database triggers create user profiles on sign-up
+- **🖼️ Avatar Upload System**: Full-featured avatar management with Supabase storage
 - **🎨 Modern UI**: Shadcn UI components with Tailwind CSS
 - **🔄 Server-Side Rendering**: Full SSR support with Supabase
 - **📱 Toast Notifications**: Sonner integration for user feedback
 - **🛡️ Robust Error Handling**: Comprehensive error handling and user messaging
 - **⚡ Real-time Validation**: Username availability, password strength
 - **📊 Code Splitting**: Optimized component architecture
+- **🔒 Secure File Storage**: RLS policies for avatar management
 
 ## 🚀 Quick Start
 
@@ -35,15 +37,19 @@ Comprehensive documentation is available in the [`/docs`](./docs/) directory:
 
 - **[📖 Quick Start Guide](./docs/guides/QUICK_START.md)** - Get up and running
 - **[🔧 Development Guide](./docs/development/DEVELOPMENT_GUIDE.md)** - Development setup
+- **[🖼️ Avatar Upload System](./docs/features/AVATAR_UPLOAD.md)** - Complete avatar management guide
+- **[📡 Avatar API Reference](./docs/api/AVATAR_API.md)** - API documentation for avatar components
 - **[🏗️ Authentication Workflow](./docs/architecture/AUTHENTICATION_WORKFLOW.md)** - Auth system overview
 - **[🧪 Testing Guide](./docs/guides/TESTING_GUIDE.md)** - Testing instructions
 - **[🔧 Troubleshooting](./docs/troubleshooting/)** - Common issues and fixes
+- **[📋 Changelog](./CHANGELOG.md)** - Version history and changes
 
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js 15 (App Router)
 - **Authentication**: Supabase Auth with SSR
 - **Database**: Supabase PostgreSQL
+- **Storage**: Supabase Storage (Avatar uploads)
 - **UI Components**: Shadcn UI + Radix UI
 - **Styling**: Tailwind CSS
 - **Forms**: React Hook Form + Zod
@@ -60,10 +66,12 @@ src/
 │   └── (dashboard)/       # Protected pages
 ├── components/            # Reusable components
 │   ├── auth/              # Auth-specific components
+│   ├── profile/           # Profile components
 │   ├── ui/                # Shadcn UI components
 │   └── skeletons/         # Loading skeletons
 ├── lib/                   # Utilities & configurations
 │   ├── supabase/          # Supabase clients
+│   ├── avatar-service.ts  # Avatar upload service
 │   └── notifications.ts   # Centralized notifications
 └── middleware.ts          # Auth middleware
 ```
