@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SignOutButton } from '@/components/auth'
 import { ProfileEditForm } from './ProfileEditForm'
+import { AvatarUpload } from '@/components/ui/avatar-upload'
 import { Edit, User, MapPin, Globe, Calendar } from 'lucide-react'
 
 interface ProfileDisplayProps {
@@ -12,6 +13,7 @@ interface ProfileDisplayProps {
     id: string
     full_name: string | null
     username: string | null
+    avatar_url: string | null
     bio: string | null
     location: string | null
     website: string | null
@@ -70,6 +72,17 @@ export function ProfileDisplay({ profile, onUpdate }: ProfileDisplayProps) {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Avatar Display Section */}
+        <div className="flex justify-center mb-6">
+          <AvatarUpload
+            userId={profile.id}
+            currentAvatarUrl={profile.avatar_url}
+            userName={profile.full_name || profile.username}
+            size="lg"
+            editable={false}
+          />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <h4 className="font-medium flex items-center gap-2">

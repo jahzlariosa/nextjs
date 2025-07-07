@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { AvatarUpload } from '@/components/ui/avatar-upload'
 import { Loader2, Save } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -28,6 +29,7 @@ interface ProfileEditFormProps {
     id: string
     full_name: string | null
     username: string | null
+    avatar_url: string | null
     bio: string | null
     location: string | null
     website: string | null
@@ -110,6 +112,21 @@ export function ProfileEditForm({ profile, onUpdate }: ProfileEditFormProps) {
         )}
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* Avatar Upload Section */}
+          <div className="flex flex-col items-center space-y-4 mb-6">
+            <div className="text-center">
+              <Label className="text-sm font-medium">Profile Picture</Label>
+              <p className="text-xs text-gray-500 mt-1">Upload a photo to personalize your profile</p>
+            </div>
+            <AvatarUpload
+              userId={profile.id}
+              currentAvatarUrl={profile.avatar_url}
+              userName={profile.full_name || profile.username}
+              onAvatarChange={onUpdate}
+              size="lg"
+            />
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="full_name">Full Name</Label>
