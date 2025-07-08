@@ -40,11 +40,12 @@ export default function AuthenticationPage() {
               <div className="bg-muted rounded-lg p-4">
                 <pre className="text-sm">
 {`1. User signs up → Supabase Auth creates user
-2. Database trigger creates profile automatically
-3. User signs in → Session established
-4. Middleware validates session on each request
-5. Protected routes check authentication
-6. User data available in server components`}
+2. Client-side logic creates the user profile
+3. Client-side logic assigns the default 'user' role
+4. User signs in → Session established
+5. Middleware validates session on each request
+6. Protected routes check authentication
+7. User data available in server components`}
                 </pre>
               </div>
             </div>
@@ -81,25 +82,39 @@ export default function AuthenticationPage() {
             </div>
             
             <div>
+              <h4 className="font-semibold mb-2">Roles Table</h4>
+              <div className="bg-muted rounded-lg p-4">
+                <pre className="text-sm">
+{`CREATE TABLE roles (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  name text UNIQUE NOT NULL,
+  created_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL
+);`}
+                </pre>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-2">Profile Roles Table</h4>
+              <div className="bg-muted rounded-lg p-4">
+                <pre className="text-sm">
+{`CREATE TABLE profile_roles (
+  profile_id uuid REFERENCES profiles(id) ON DELETE CASCADE,
+  role_id uuid REFERENCES roles(id) ON DELETE CASCADE,
+  created_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL,
+  PRIMARY KEY (profile_id, role_id)
+);`}
+                </pre>
+              </div>
+            </div>
+
+            <div>
               <h4 className="font-semibold mb-2">Auto-Profile Creation</h4>
               <div className="bg-muted rounded-lg p-4">
                 <pre className="text-sm">
-{`CREATE OR REPLACE FUNCTION handle_new_user()
-RETURNS trigger AS $$
-BEGIN
-  INSERT INTO public.profiles (id, email, full_name)
-  VALUES (
-    NEW.id,
-    NEW.email,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email)
-  );
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION handle_new_user();`}
+{`-- Note: The database trigger has been removed.
+-- Profile creation is now handled on the client-side after sign-up.`}
                 </pre>
               </div>
             </div>
@@ -217,6 +232,8 @@ CREATE TRIGGER on_auth_user_created
                 <pre className="text-sm">
 {`-- Enable RLS
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE roles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profile_roles ENABLE ROW LEVEL SECURITY;
 
 -- Users can view their own profile
 CREATE POLICY "Users can view own profile" ON profiles
@@ -228,7 +245,15 @@ CREATE POLICY "Users can update own profile" ON profiles
 
 -- Users can insert their own profile
 CREATE POLICY "Users can insert own profile" ON profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);`}
+  FOR INSERT WITH CHECK (auth.uid() = id);
+
+-- Authenticated users can view roles
+CREATE POLICY "Authenticated users can view roles" ON roles
+  FOR SELECT TO authenticated USING (true);
+
+-- Users can view their own roles
+CREATE POLICY "Users can view their own roles" ON profile_roles
+  FOR SELECT USING (auth.uid() = profile_id);`}
                 </pre>
               </div>
             </div>
