@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { UserProfileClient } from '@/components/profile'
+import { Profile } from '@/lib/types'
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -13,7 +14,7 @@ export default async function ProfilePage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*, roles:profile_roles(roles(id, name)))')
     .eq('id', user.id)
     .single()
 
@@ -29,7 +30,7 @@ export default async function ProfilePage() {
           Manage your account settings and profile information.
         </p>
       </div>
-      <UserProfileClient userId={user.id} initialProfile={profile} />
+      <UserProfileClient userId={user.id} initialProfile={profile as unknown as Profile} />
     </div>
   )
 }

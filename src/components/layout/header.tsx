@@ -28,15 +28,11 @@ import {
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import type { Profile } from '@/lib/types'
 
 interface HeaderProps {
   user?: SupabaseUser
-  profile?: {
-    id: string
-    full_name: string | null
-    username: string | null
-    avatar_url: string | null
-  }
+  profile?: Profile
 }
 
 export function Header({ user, profile }: HeaderProps) {

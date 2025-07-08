@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import { ProfileSkeleton } from '@/components/skeletons'
 import { UserProfileClient } from '@/components/profile'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Profile } from '@/lib/types'
 
 // Force dynamic rendering and prevent caching for authenticated pages
 export const dynamic = 'force-dynamic'
@@ -40,7 +41,7 @@ async function UserProfile({ userId }: { userId: string }) {
   
   const { data: profile, error } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*, roles:profile_roles(roles(id, name)))')
     .eq('id', userId)
     .single()
 
@@ -61,7 +62,7 @@ async function UserProfile({ userId }: { userId: string }) {
   return (
     <UserProfileClient 
       userId={userId} 
-      initialProfile={profile}
+      initialProfile={profile as unknown as Profile}
     />
   )
 }

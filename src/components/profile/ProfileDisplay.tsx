@@ -7,19 +7,11 @@ import { SignOutButton } from '@/components/auth'
 import { ProfileEditForm } from './ProfileEditForm'
 import { AvatarUpload } from '@/components/ui/avatar-upload'
 import { Edit, User, MapPin, Globe, Calendar } from 'lucide-react'
+import { Profile } from '@/lib/types'
+import { Badge } from '@/components/ui/badge'
 
 interface ProfileDisplayProps {
-  profile: {
-    id: string
-    full_name: string | null
-    username: string | null
-    avatar_url: string | null
-    bio: string | null
-    location: string | null
-    website: string | null
-    created_at: string
-    updated_at: string
-  }
+  profile: Profile
   onUpdate: () => void
 }
 
@@ -100,12 +92,29 @@ export function ProfileDisplay({ profile, onUpdate }: ProfileDisplayProps) {
           </div>
         </div>
 
-        <div>
-          <h4 className="font-medium flex items-center gap-2">
-            <User className="h-4 w-4" />
-            Bio
-          </h4>
-          <p className="text-muted-foreground">{profile?.bio || 'Not set'}</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h4 className="font-medium flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Bio
+            </h4>
+            <p className="text-muted-foreground">{profile?.bio || 'Not set'}</p>
+          </div>
+          <div>
+            <h4 className="font-medium flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Roles
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {profile.roles && profile.roles.length > 0 ? (
+                profile.roles.map((profileRole) => (
+                  <Badge key={profileRole.roles.id}>{profileRole.roles.name}</Badge>
+                ))
+              ) : (
+                <p className="text-muted-foreground">No roles assigned</p>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

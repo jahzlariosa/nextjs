@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AvatarUpload } from '@/components/ui/avatar-upload'
 import { Loader2, Save } from 'lucide-react'
 import { toast } from 'sonner'
+import { Profile } from '@/lib/types'
 
 const profileSchema = z.object({
   full_name: z.string().max(100, 'Full name must be less than 100 characters').optional(),
@@ -25,15 +26,7 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>
 
 interface ProfileEditFormProps {
-  profile: {
-    id: string
-    full_name: string | null
-    username: string | null
-    avatar_url: string | null
-    bio: string | null
-    location: string | null
-    website: string | null
-  }
+  profile: Profile
   onUpdate: () => void
 }
 

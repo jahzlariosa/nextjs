@@ -5,18 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Header } from './header'
 import { Footer } from './footer'
 import type { User } from '@supabase/supabase-js'
-
-interface Profile {
-  id: string
-  full_name: string | null
-  username: string | null
-  avatar_url: string | null
-  bio: string | null
-  location: string | null
-  website: string | null
-  created_at: string
-  updated_at: string
-}
+import type { Profile } from '@/lib/types'
 
 interface LayoutWrapperProps {
   children: React.ReactNode

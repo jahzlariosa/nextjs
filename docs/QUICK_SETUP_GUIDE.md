@@ -28,12 +28,19 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 ### 4. Database Setup
 
-In your Supabase SQL Editor, run:
+In your Supabase SQL Editor, run the following scripts in order:
 
 ```sql
+-- 1. Create profiles table
 -- Copy and paste the complete setup script from:
 -- database/migrations/001_create_profiles_table.sql
+
+-- 2. Create roles table
+-- Copy and paste the complete setup script from:
+-- database/migrations/002_create_roles_table.sql
 ```
+
+**Note:** The user profile and default role are now created on the client-side after a successful sign-up. The database trigger has been removed.
 
 ### 5. Start Development
 
@@ -51,9 +58,10 @@ npm run dev
 ## 🔄 Reset to Clean State
 
 ```bash
-# Run the restoration script in Supabase SQL Editor
-# From: database/migrations/001_create_profiles_table.sql
-# Section: "Clean State Restoration Script"
+# Run the restoration scripts in Supabase SQL Editor in order
+# From: database/migrations/
+# 1. 001_create_profiles_table.sql
+# 2. 002_create_roles_table.sql
 ```
 
 ## 📁 Key Files to Backup

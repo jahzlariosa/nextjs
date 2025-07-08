@@ -4,20 +4,11 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { ProfileDisplay } from '@/components/profile'
 import { ProfileSkeleton } from '@/components/skeletons'
+import { Profile } from '@/lib/types'
 
 interface UserProfileClientProps {
   userId: string
-  initialProfile: {
-    id: string
-    full_name: string | null
-    username: string | null
-    avatar_url: string | null
-    bio: string | null
-    location: string | null
-    website: string | null
-    created_at: string
-    updated_at: string
-  }
+  initialProfile: Profile
 }
 
 export function UserProfileClient({ userId, initialProfile }: UserProfileClientProps) {
@@ -30,12 +21,12 @@ export function UserProfileClient({ userId, initialProfile }: UserProfileClientP
     try {
       const { data } = await supabase
         .from('profiles')
-        .select('*')
+        .select('*, roles:profile_roles(roles(id, name))')
         .eq('id', userId)
         .single()
       
       if (data) {
-        setProfile(data)
+        setProfile(data as unknown as Profile)
       }
     } catch (error) {
       console.error('Error refreshing profile:', error)

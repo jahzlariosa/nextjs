@@ -78,44 +78,58 @@ CREATE INDEX idx_profiles_created_at ON profiles(created_at);
 CREATE INDEX idx_profiles_is_public ON profiles(is_public);
 ```
 
-### Auto-Population Trigger
+### Roles Table
 ```sql
--- Function to handle new user profile creation
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS trigger AS $$
-BEGIN
-  INSERT INTO public.profiles (id, username, full_name)
-  VALUES (
-    NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'username', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1))
-  );
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+-- roles table
+CREATE TABLE roles (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  name text UNIQUE NOT NULL,
+  created_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL,
+  updated_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL
+);
 
--- Trigger to automatically create profile on user signup
-CREATE OR REPLACE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+-- Enable Row Level Security
+ALTER TABLE roles ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies
+CREATE POLICY "Authenticated users can view roles" ON roles
+  FOR SELECT TO authenticated USING (true);
+```
+
+### Profile Roles Table
+```sql
+-- profile_roles join table
+CREATE TABLE profile_roles (
+  profile_id uuid REFERENCES profiles(id) ON DELETE CASCADE,
+  role_id uuid REFERENCES roles(id) ON DELETE CASCADE,
+  created_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL,
+  PRIMARY KEY (profile_id, role_id)
+);
+
+-- Enable Row Level Security
+ALTER TABLE profile_roles ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies
+CREATE POLICY "Users can view their own roles" ON profile_roles
+  FOR SELECT USING (auth.uid() = profile_id);
 ```
 
 ## Authentication Workflows
 
 ### 1. Sign-Up Workflow
 
+The sign-up process is now handled on the client-side after the user is successfully created in Supabase Auth.
+
 ```mermaid
 graph TD
     A[User visits /sign-up] --> B[Server Component renders form]
     B --> C[User fills form]
-    C --> D[Client Component submits]
-    D --> E[Supabase Auth creates user]
-    E --> F[Trigger creates profile]
-    F --> G[Email verification sent]
-    G --> H[Redirect to /verify-email]
-    H --> I[User clicks email link]
-    I --> J[Account activated]
-    J --> K[Redirect to /dashboard]
+    C --> D[Client Component submits to Supabase Auth]
+    D --> E{Sign-up successful?}
+    E -->|Yes| F[Client creates Profile in DB]
+    F --> G[Client assigns default Role]
+    G --> H[Redirect to /dashboard]
+    E -->|No| I[Show error message]
 ```
 
 #### Implementation Details
