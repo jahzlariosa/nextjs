@@ -32,7 +32,7 @@ In your Supabase SQL Editor, run:
 
 ```sql
 -- Copy and paste the complete setup script from:
--- docs/DATABASE_MIGRATION_CLEAN_STATE.sql
+-- database/migrations/001_create_profiles_table.sql
 ```
 
 ### 5. Start Development
@@ -52,7 +52,7 @@ npm run dev
 
 ```bash
 # Run the restoration script in Supabase SQL Editor
-# From: docs/DATABASE_MIGRATION_CLEAN_STATE.sql
+# From: database/migrations/001_create_profiles_table.sql
 # Section: "Clean State Restoration Script"
 ```
 

@@ -22,7 +22,6 @@ Documentation for developers working on the project.
 System architecture and workflow documentation.
 
 - **[Authentication Workflow](./architecture/AUTHENTICATION_WORKFLOW.md)** - Complete auth flow documentation
-- **[Auth Workflow](./architecture/AUTH_WORKFLOW.md)** - Alternative auth workflow docs
 
 ### `/troubleshooting/`
 Troubleshooting guides and fix documentation.

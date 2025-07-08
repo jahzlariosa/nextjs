@@ -2,159 +2,298 @@
 
 ## Overview
 
-This document outlines the complete authentication workflow for the Next.js + Supabase SSR application. The authentication system uses server-side rendering with automatic profile creation and proper session management.
+This document outlines the complete authentication workflow for our Next.js 15 + Supabase SSR application. The authentication system prioritizes server-side rendering, automatic profile creation, and seamless user experience.
 
-## Architecture Flow
+## Architecture
+
+### Server-Side Rendering (SSR) Flow
+- **Server Components**: Handle authentication checks and data fetching
+- **Middleware**: Manages session validation and route protection
+- **Client Components**: Handle user interactions and form submissions
+- **Cache Busting**: Ensures authenticated content is never cached
+
+## Authentication Flow Diagram
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Client Side   │    │   Server Side   │    │    Supabase     │
-│                 │    │                 │    │                 │
-│  Sign Up Form   │───▶│  Server Action  │───▶│  Auth + Profile │
-│                 │    │                 │    │                 │
+│   User Access   │───▶│   Middleware    │───▶│  Route Handler  │
+│   Protected     │    │   Checks        │    │   (Server)      │
+│   Route         │    │   Session       │    │                 │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Middleware    │    │  Session Check  │    │   RLS Policies  │
-│                 │    │                 │    │                 │
-│  Route Guard    │◀───│  Server Client  │◀───│  Row Security   │
-│                 │    │                 │    │                 │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │                        │
+                                ▼                        ▼
+                       ┌─────────────────┐    ┌─────────────────┐
+                       │   Redirect to   │    │   Render Page   │
+                       │   Sign-in       │    │   with Profile  │
+                       │   (No Session)  │    │   (Has Session) │
+                       └─────────────────┘    └─────────────────┘
 ```
 
 ## Database Schema
 
-### 1. Auth Users Table (Managed by Supabase)
-- Automatically created by Supabase Auth
-- Contains email, password hash, metadata
-- UUID primary key used for profile reference
-
-### 2. Profiles Table (Custom)
+### Users Table (Supabase Auth)
 ```sql
+-- Automatically managed by Supabase Auth
+-- Contains: id, email, email_confirmed_at, created_at, updated_at, etc.
+```
+
+### Profiles Table
+```sql
+-- profiles table with auto-population trigger
 CREATE TABLE profiles (
   id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
-  email text NOT NULL,
-  full_name text,
   username text UNIQUE,
+  full_name text,
   avatar_url text,
   bio text,
   website text,
   location text,
+  date_of_birth date,
+  phone text,
+  is_public boolean DEFAULT true,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
   PRIMARY KEY (id)
 );
+
+-- Enable Row Level Security
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies
+CREATE POLICY "Users can view own profile" ON profiles
+  FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Users can view public profiles" ON profiles
+  FOR SELECT USING (is_public = true);
+
+CREATE POLICY "Users can update own profile" ON profiles
+  FOR UPDATE USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert own profile" ON profiles
+  FOR INSERT WITH CHECK (auth.uid() = id);
+
+-- Indexes for performance
+CREATE INDEX idx_profiles_username ON profiles(username);
+CREATE INDEX idx_profiles_created_at ON profiles(created_at);
+CREATE INDEX idx_profiles_is_public ON profiles(is_public);
 ```
 
-### 3. Database Triggers
-Auto-populate profile on user creation:
+### Auto-Population Trigger
 ```sql
+-- Function to handle new user profile creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email, full_name)
+  INSERT INTO public.profiles (id, username, full_name)
   VALUES (
     NEW.id,
-    NEW.email,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email)
+    COALESCE(NEW.raw_user_meta_data->>'username', split_part(NEW.email, '@', 1)),
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1))
   );
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE TRIGGER on_auth_user_created
+-- Trigger to automatically create profile on user signup
+CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 ```
 
-## Authentication Flow
+## Authentication Workflows
 
-### 1. Sign Up Process
+### 1. Sign-Up Workflow
 
-#### Step 1: User Submits Form
+```mermaid
+graph TD
+    A[User visits /sign-up] --> B[Server Component renders form]
+    B --> C[User fills form]
+    C --> D[Client Component submits]
+    D --> E[Supabase Auth creates user]
+    E --> F[Trigger creates profile]
+    F --> G[Email verification sent]
+    G --> H[Redirect to /verify-email]
+    H --> I[User clicks email link]
+    I --> J[Account activated]
+    J --> K[Redirect to /dashboard]
+```
+
+#### Implementation Details
+
+**Server Component** (`app/(auth)/sign-up/page.tsx`):
 ```typescript
-// app/(auth)/sign-up/page.tsx
-const formData = {
-  email: 'user@example.com',
-  password: 'securepassword',
-  full_name: 'John Doe'
+// Server-side rendering with cache busting
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
+export default async function SignUpPage() {
+  const supabase = await createClient()
+  const { data: { session } } = await supabase.auth.getSession()
+  
+  // Redirect authenticated users
+  if (session) {
+    redirect('/dashboard')
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <SignUpForm />
+    </div>
+  )
 }
 ```
 
-#### Step 2: Server Action Processing
+**Client Component** (`components/auth/SignUpForm.tsx`):
 ```typescript
-// app/(auth)/sign-up/actions.ts
-export async function signUp(formData: FormData) {
-  const supabase = await createClient()
-  
-  const { data, error } = await supabase.auth.signUp({
-    email: formData.get('email'),
-    password: formData.get('password'),
-    options: {
-      data: {
-        full_name: formData.get('full_name')
+'use client'
+
+export function SignUpForm() {
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState('')
+  const supabase = createClient()
+  const router = useRouter()
+
+  const handleSignUp = async (formData: SignUpFormData) => {
+    setIsLoading(true)
+    setError('')
+
+    const { error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: {
+          full_name: formData.fullName,
+          username: formData.username
+        }
       }
+    })
+
+    if (error) {
+      setError(error.message)
+    } else {
+      router.push('/verify-email')
     }
-  })
-  
-  if (error) {
-    return { error: error.message }
+
+    setIsLoading(false)
   }
-  
-  // Profile automatically created by database trigger
-  redirect('/dashboard')
+
+  return (
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <CardTitle>Create Account</CardTitle>
+        <CardDescription>Sign up for a new account</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <SignUpFormComponent onSubmit={handleSignUp} isLoading={isLoading} error={error} />
+      </CardContent>
+    </Card>
+  )
 }
 ```
 
-#### Step 3: Automatic Profile Creation
-- Database trigger fires on user creation
-- Profile record created with user ID and email
-- Full name populated from metadata or email
+### 2. Sign-In Workflow
 
-### 2. Sign In Process
-
-#### Step 1: User Submits Credentials
-```typescript
-// app/(auth)/sign-in/page.tsx
-const credentials = {
-  email: 'user@example.com',
-  password: 'securepassword'
-}
+```mermaid
+graph TD
+    A[User visits /sign-in] --> B[Server Component renders form]
+    B --> C[User fills credentials]
+    C --> D[Client Component submits]
+    D --> E[Supabase Auth validates]
+    E --> F{Authentication Success?}
+    F -->|Yes| G[Session created]
+    F -->|No| H[Show error message]
+    G --> I[Middleware refreshes session]
+    I --> J[Redirect to /dashboard]
+    H --> C
 ```
 
-#### Step 2: Server Action Processing
-```typescript
-// app/(auth)/sign-in/actions.ts
-export async function signIn(formData: FormData) {
-  const supabase = await createClient()
-  
-  const { error } = await supabase.auth.signInWithPassword({
-    email: formData.get('email'),
-    password: formData.get('password')
-  })
-  
-  if (error) {
-    return { error: error.message }
-  }
-  
-  redirect('/dashboard')
-}
+### 3. Protected Route Workflow
+
+```mermaid
+graph TD
+    A[User accesses /dashboard] --> B[Middleware checks session]
+    B --> C{Has valid session?}
+    C -->|Yes| D[Server Component fetches profile]
+    C -->|No| E[Redirect to /sign-in]
+    D --> F[Render dashboard with profile data]
+    E --> G[Sign-in page]
 ```
 
-#### Step 3: Session Establishment
-- Supabase creates session cookies
-- Middleware validates session on subsequent requests
-- Server components can access user data
+### 4. Session Management Workflow
 
-### 3. Session Management
+```mermaid
+graph TD
+    A[Page Load] --> B[Server Component checks session]
+    B --> C{Session expired?}
+    C -->|Yes| D[Middleware refreshes token]
+    C -->|No| E[Continue with current session]
+    D --> F{Refresh successful?}
+    F -->|Yes| E
+    F -->|No| G[Redirect to sign-in]
+    E --> H[Render page with user data]
+```
 
-#### Middleware Session Check
+## Component Architecture
+
+### Server Components (Default)
+- **Pages**: All auth pages (`/sign-in`, `/sign-up`, `/dashboard`)
+- **Layouts**: Root layout and dashboard layout
+- **Data Fetching**: Profile loading and user data
+- **Route Protection**: Session validation
+
+### Client Components (When Needed)
+- **Forms**: Sign-in, sign-up, profile edit forms
+- **Interactive Elements**: Buttons with state, form validation
+- **Auth Context**: User state management across components
+
+### Component Organization
+```
+src/
+├── app/
+│   ├── (auth)/
+│   │   ├── sign-in/
+│   │   │   ├── page.tsx (Server)
+│   │   │   └── loading.tsx (Skeleton)
+│   │   ├── sign-up/
+│   │   │   ├── page.tsx (Server)
+│   │   │   └── loading.tsx (Skeleton)
+│   │   └── verify-email/
+│   │       ├── page.tsx (Server)
+│   │       └── loading.tsx (Skeleton)
+│   └── (dashboard)/
+│       ├── dashboard/
+│       │   ├── page.tsx (Server)
+│       │   └── loading.tsx (Skeleton)
+│       └── layout.tsx (Server)
+├── components/
+│   ├── auth/
+│   │   ├── index.ts (Barrel export)
+│   │   ├── SignInForm.tsx (Client)
+│   │   ├── SignUpForm.tsx (Client)
+│   │   ├── AuthProvider.tsx (Client)
+│   │   └── AuthSkeleton.tsx (Server)
+│   └── profile/
+│       ├── index.ts (Barrel export)
+│       ├── ProfileCard.tsx (Server)
+│       ├── ProfileForm.tsx (Client)
+│       └── ProfileSkeleton.tsx (Server)
+```
+
+## Middleware Configuration
+
+### Route Protection
 ```typescript
 // middleware.ts
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
+
 export async function middleware(request: NextRequest) {
-  let supabaseResponse = NextResponse.next()
-  
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -166,297 +305,184 @@ export async function middleware(request: NextRequest) {
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value, options }) => {
             request.cookies.set(name, value)
-            supabaseResponse.cookies.set(name, value, options)
+            response.cookies.set(name, value, options)
           })
         },
       },
     }
   )
-  
+
+  // Refresh session if expired
   const { data: { session } } = await supabase.auth.getSession()
-  
-  // Protected routes
-  if (request.nextUrl.pathname.startsWith('/dashboard')) {
-    if (!session) {
-      return NextResponse.redirect(new URL('/sign-in', request.url))
-    }
+
+  // Route protection logic
+  const protectedRoutes = ['/dashboard', '/profile', '/settings']
+  const authRoutes = ['/sign-in', '/sign-up', '/verify-email']
+  const publicRoutes = ['/', '/about', '/contact']
+
+  const isProtectedRoute = protectedRoutes.some(route => 
+    request.nextUrl.pathname.startsWith(route)
+  )
+  const isAuthRoute = authRoutes.some(route => 
+    request.nextUrl.pathname.startsWith(route)
+  )
+
+  // Redirect logic
+  if (isProtectedRoute && !session) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/sign-in'
+    url.searchParams.set('redirect', request.nextUrl.pathname)
+    return NextResponse.redirect(url)
   }
-  
-  // Auth routes (redirect if already logged in)
-  if (request.nextUrl.pathname.startsWith('/sign-in') || 
-      request.nextUrl.pathname.startsWith('/sign-up')) {
-    if (session) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
+
+  if (isAuthRoute && session) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/dashboard'
+    return NextResponse.redirect(url)
   }
-  
-  return supabaseResponse
-}
-```
 
-## Component Structure
-
-### 1. Server Components (Default)
-
-#### Authentication Pages
-```typescript
-// app/(auth)/sign-in/page.tsx - Server Component
-export default function SignInPage() {
-  return (
-    <div className="container mx-auto max-w-md">
-      <SignInForm />
-    </div>
-  )
-}
-
-// app/(auth)/sign-up/page.tsx - Server Component
-export default function SignUpPage() {
-  return (
-    <div className="container mx-auto max-w-md">
-      <SignUpForm />
-    </div>
-  )
-}
-```
-
-#### Protected Dashboard
-```typescript
-// app/dashboard/page.tsx - Server Component
-export default async function DashboardPage() {
-  const supabase = await createClient()
-  
-  const { data: { session } } = await supabase.auth.getSession()
-  if (!session) redirect('/sign-in')
-  
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', session.user.id)
-    .single()
-  
-  return (
-    <div className="container mx-auto">
-      <h1>Welcome, {profile?.full_name || session.user.email}!</h1>
-      <ProfileCard profile={profile} />
-    </div>
-  )
-}
-```
-
-### 2. Client Components (When Needed)
-
-#### Interactive Forms
-```typescript
-// components/auth/SignInForm.tsx - Client Component
-'use client'
-
-import { useState } from 'react'
-import { signIn } from '@/app/(auth)/sign-in/actions'
-
-export function SignInForm() {
-  const [pending, setPending] = useState(false)
-  const [error, setError] = useState('')
-  
-  async function handleSubmit(formData: FormData) {
-    setPending(true)
-    setError('')
-    
-    const result = await signIn(formData)
-    
-    if (result?.error) {
-      setError(result.error)
-    }
-    
-    setPending(false)
+  // Cache busting for authenticated pages
+  if (isProtectedRoute || (session && !isAuthRoute)) {
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
+    response.headers.set('Pragma', 'no-cache')
+    response.headers.set('Expires', '0')
   }
-  
-  return (
-    <form action={handleSubmit}>
-      {/* Form fields */}
-    </form>
-  )
+
+  return response
 }
-```
 
-## Row Level Security (RLS)
-
-### Profiles Table Policies
-```sql
--- Enable RLS
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-
--- Users can view their own profile
-CREATE POLICY "Users can view own profile" ON profiles
-  FOR SELECT USING (auth.uid() = id);
-
--- Users can update their own profile
-CREATE POLICY "Users can update own profile" ON profiles
-  FOR UPDATE USING (auth.uid() = id);
-
--- Users can insert their own profile (handled by trigger)
-CREATE POLICY "Users can insert own profile" ON profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
-
--- Public profiles can be viewed by anyone (optional)
-CREATE POLICY "Public profiles are viewable by everyone" ON profiles
-  FOR SELECT USING (true);
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+}
 ```
 
 ## Error Handling
 
 ### Authentication Errors
 ```typescript
-// Common error scenarios
-const errorMessages = {
+// Common authentication errors and handling
+const authErrors = {
   'Invalid login credentials': 'Invalid email or password',
   'Email not confirmed': 'Please check your email and click the confirmation link',
+  'Password should be at least 6 characters': 'Password must be at least 6 characters long',
   'User already registered': 'An account with this email already exists',
-  'Password should be at least 6 characters': 'Password must be at least 6 characters long'
+  'Email rate limit exceeded': 'Too many attempts. Please try again later'
+}
+
+export function getAuthErrorMessage(error: AuthError): string {
+  return authErrors[error.message] || 'An unexpected error occurred'
 }
 ```
 
-### Error Display
+### Loading States
 ```typescript
-// components/auth/ErrorMessage.tsx
-import { Alert, AlertDescription } from '@/components/ui/alert'
-
-export function ErrorMessage({ error }: { error: string }) {
-  if (!error) return null
-  
+// Loading skeletons for auth components
+export function AuthSkeleton() {
   return (
-    <Alert variant="destructive">
-      <AlertDescription>{error}</AlertDescription>
-    </Alert>
+    <Card className="w-full max-w-md">
+      <CardHeader>
+        <Skeleton className="h-6 w-32" />
+        <Skeleton className="h-4 w-48" />
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </CardContent>
+    </Card>
   )
 }
 ```
 
-## Session State Management
+## Security Considerations
 
-### Client-Side Session Context
-```typescript
-// components/auth/AuthProvider.tsx
-'use client'
+### Row Level Security (RLS)
+- All profile data protected by RLS policies
+- Users can only access their own data
+- Public profiles viewable by all users
+- Admin roles for special permissions
 
-import { createContext, useContext, useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+### Session Security
+- Automatic session refresh via middleware
+- Secure cookie handling
+- CSRF protection via Supabase
+- Rate limiting on auth endpoints
 
-const AuthContext = createContext<{
-  user: User | null
-  loading: boolean
-  signOut: () => Promise<void>
-}>({
-  user: null,
-  loading: true,
-  signOut: async () => {}
-})
-
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
-  const supabase = createClient()
-  
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null)
-        setLoading(false)
-      }
-    )
-    
-    return () => subscription.unsubscribe()
-  }, [])
-  
-  const signOut = async () => {
-    await supabase.auth.signOut()
-  }
-  
-  return (
-    <AuthContext.Provider value={{ user, loading, signOut }}>
-      {children}
-    </AuthContext.Provider>
-  )
-}
-```
-
-## Cache Strategy
-
-### Authenticated Pages
-```typescript
-// app/dashboard/page.tsx
-export const dynamic = 'force-dynamic'
-export const revalidate = 0
-
-// Prevents caching of authenticated content
-```
-
-### Public Pages
-```typescript
-// app/page.tsx
-export const revalidate = 3600 // Cache for 1 hour
-
-// Public content can be cached
-```
+### Data Validation
+- Client-side form validation with Zod
+- Server-side validation in API routes
+- Sanitization of user inputs
+- Email verification required
 
 ## Testing Strategy
 
 ### Unit Tests
 ```typescript
-// __tests__/auth.test.ts
-import { signUp, signIn } from '@/app/(auth)/actions'
-
-describe('Authentication', () => {
-  it('should create user and profile on sign up', async () => {
-    // Test user creation
+// Example: Auth form validation tests
+describe('SignUpForm', () => {
+  it('validates email format', () => {
+    // Test email validation
   })
   
-  it('should authenticate user on sign in', async () => {
-    // Test authentication
+  it('validates password strength', () => {
+    // Test password requirements
+  })
+  
+  it('handles authentication errors', () => {
+    // Test error handling
   })
 })
 ```
 
 ### Integration Tests
-```typescript
-// __tests__/auth-flow.test.ts
-describe('Authentication Flow', () => {
-  it('should redirect to dashboard after successful sign in', async () => {
-    // Test full authentication flow
-  })
-})
+- Test complete sign-up flow
+- Test profile creation trigger
+- Test session management
+- Test route protection
+
+## Performance Optimization
+
+### Code Splitting
+- Dynamic imports for auth forms
+- Separate bundles for auth vs dashboard
+- Lazy loading of profile components
+
+### Caching Strategy
+- No caching for authenticated pages
+- Static caching for public pages
+- CDN caching for assets
+
+### Bundle Analysis
+```bash
+# Monitor auth bundle sizes
+npm run analyze
 ```
 
-## Security Considerations
+## Deployment Checklist
 
-### 1. Server-Side Validation
-- All auth actions happen on server
-- Form validation on both client and server
-- SQL injection prevention with parameterized queries
+### Environment Variables
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+```
 
-### 2. Session Security
-- HTTPOnly cookies for session storage
-- Secure cookie flags in production
-- Automatic session refresh
+### Database Setup
+- [ ] Create profiles table
+- [ ] Set up RLS policies
+- [ ] Create auto-population trigger
+- [ ] Test trigger functionality
+- [ ] Set up proper indexes
 
-### 3. Rate Limiting
-- Implement rate limiting for auth endpoints
-- Prevent brute force attacks
-- Monitor failed login attempts
-
-### 4. Password Security
-- Minimum password requirements
-- Password hashing handled by Supabase
-- Optional password strength indicators
-
-## Next Steps
-
-1. **Database Setup**: Create tables, triggers, and RLS policies
-2. **Supabase Clients**: Implement server and client Supabase clients
-3. **Middleware**: Set up authentication middleware
-4. **Components**: Create auth forms with proper error handling
-5. **Testing**: Implement comprehensive test suite
-6. **Security**: Add rate limiting and additional security measures
+### Application Setup
+- [ ] Configure Supabase project
+- [ ] Set up email templates
+- [ ] Configure redirect URLs
+- [ ] Test authentication flow
+- [ ] Verify session management
 
 ---
 
-This workflow ensures a robust, secure, and user-friendly authentication system with proper server-side rendering and automatic profile management.
+This authentication workflow provides a comprehensive, secure, and performant authentication system using Supabase SSR with automatic profile creation and proper session management.
