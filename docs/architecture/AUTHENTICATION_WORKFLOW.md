@@ -114,11 +114,44 @@ CREATE POLICY "Users can view their own roles" ON profile_roles
   FOR SELECT USING (auth.uid() = profile_id);
 ```
 
+### Auto-Population Trigger
+```sql
+-- Function to handle new user profile creation
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+DECLARE
+  user_role_id uuid;
+BEGIN
+  -- Create the user profile
+  INSERT INTO public.profiles (id, username, full_name)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'username', split_part(NEW.email, '@', 1)),
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1))
+  );
+
+  -- Get the 'user' role ID
+  SELECT id INTO user_role_id FROM public.roles WHERE name = 'user' LIMIT 1;
+
+  -- Assign the 'user' role to the new profile
+  IF user_role_id IS NOT NULL THEN
+    INSERT INTO public.profile_roles (profile_id, role_id)
+    VALUES (NEW.id, user_role_id);
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger to automatically create profile on user signup
+CREATE OR REPLACE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+```
+
 ## Authentication Workflows
 
 ### 1. Sign-Up Workflow
-
-The sign-up process is now handled on the client-side after the user is successfully created in Supabase Auth.
 
 ```mermaid
 graph TD
@@ -126,10 +159,9 @@ graph TD
     B --> C[User fills form]
     C --> D[Client Component submits to Supabase Auth]
     D --> E{Sign-up successful?}
-    E -->|Yes| F[Client creates Profile in DB]
-    F --> G[Client assigns default Role]
-    G --> H[Redirect to /dashboard]
-    E -->|No| I[Show error message]
+    E -->|Yes| F[Database trigger creates Profile & assigns Role]
+    F --> G[Redirect to /dashboard]
+    E -->|No| H[Show error message]
 ```
 
 #### Implementation Details

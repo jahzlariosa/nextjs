@@ -38,9 +38,13 @@ In your Supabase SQL Editor, run the following scripts in order:
 -- 2. Create roles table
 -- Copy and paste the complete setup script from:
 -- database/migrations/002_create_roles_table.sql
+
+-- 3. Re-create the handle_new_user trigger
+-- Copy and paste the complete setup script from:
+-- database/migrations/010_recreate_handle_new_user_trigger.sql
 ```
 
-**Note:** The user profile and default role are now created on the client-side after a successful sign-up. The database trigger has been removed.
+**Note:** The user profile and default role are now created by a database trigger after a successful sign-up.
 
 ### 5. Start Development
 
@@ -62,6 +66,7 @@ npm run dev
 # From: database/migrations/
 # 1. 001_create_profiles_table.sql
 # 2. 002_create_roles_table.sql
+# 3. 010_recreate_handle_new_user_trigger.sql
 ```
 
 ## 📁 Key Files to Backup

@@ -100,11 +100,10 @@ export default function AuthOverviewPage() {
               <h4 className="font-medium">Process:</h4>
               <ol className="text-sm text-muted-foreground space-y-1 ml-4">
                 <li>1. User submits registration form</li>
-                <li>2. Client-side validation is performed</li>
-                <li>3. Supabase creates the auth user</li>
-                <li>4. Client-side logic creates the user profile</li>
-                <li>5. Client-side logic assigns the default 'user' role</li>
-                <li>6. User is redirected to the dashboard</li>
+                <li>2. Server action validates input</li>
+                <li>3. Supabase creates auth user</li>
+                <li>4. Database trigger creates profile and assigns default role</li>
+                <li>5. User is redirected to dashboard</li>
               </ol>
             </div>
           </CardContent>
@@ -187,8 +186,26 @@ export async function middleware(request: NextRequest) {
           <CardContent className="space-y-4">
             <div className="bg-muted p-4 rounded-lg">
               <code className="text-sm">
-                {`-- Note: The database trigger has been removed.
--- Profile creation is now handled on the client-side after sign-up.`}
+                {`-- Database trigger for auto profile creation
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email)
+  );
+  -- Assign default role
+  INSERT INTO public.profile_roles (profile_id, role_id)
+  SELECT NEW.id, id FROM public.roles WHERE name = 'user';
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();`}
               </code>
             </div>
             <div className="space-y-2">
@@ -202,7 +219,6 @@ export async function middleware(request: NextRequest) {
                 <li>• <code>bio</code> - User biography</li>
                 <li>• <code>website</code> - Personal website</li>
                 <li>• <code>location</code> - User location</li>
-                <li>• <code>roles</code> - User roles (e.g., user, admin)</li>
               </ul>
             </div>
           </CardContent>

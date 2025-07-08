@@ -40,12 +40,11 @@ export default function AuthenticationPage() {
               <div className="bg-muted rounded-lg p-4">
                 <pre className="text-sm">
 {`1. User signs up → Supabase Auth creates user
-2. Client-side logic creates the user profile
-3. Client-side logic assigns the default 'user' role
-4. User signs in → Session established
-5. Middleware validates session on each request
-6. Protected routes check authentication
-7. User data available in server components`}
+2. Database trigger creates profile and assigns default role
+3. User signs in → Session established
+4. Middleware validates session on each request
+5. Protected routes check authentication
+6. User data available in server components`}
                 </pre>
               </div>
             </div>
@@ -113,8 +112,35 @@ export default function AuthenticationPage() {
               <h4 className="font-semibold mb-2">Auto-Profile Creation</h4>
               <div className="bg-muted rounded-lg p-4">
                 <pre className="text-sm">
-{`-- Note: The database trigger has been removed.
--- Profile creation is now handled on the client-side after sign-up.`}
+{`CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS trigger AS $$
+DECLARE
+  user_role_id uuid;
+BEGIN
+  -- Create the user profile
+  INSERT INTO public.profiles (id, username, full_name)
+  VALUES (
+    NEW.id,
+    COALESCE(NEW.raw_user_meta_data->>'username', split_part(NEW.email, '@', 1)),
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1))
+  );
+
+  -- Get the 'user' role ID
+  SELECT id INTO user_role_id FROM public.roles WHERE name = 'user' LIMIT 1;
+
+  -- Assign the 'user' role to the new profile
+  IF user_role_id IS NOT NULL THEN
+    INSERT INTO public.profile_roles (profile_id, role_id)
+    VALUES (NEW.id, user_role_id);
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION handle_new_user();`}
                 </pre>
               </div>
             </div>

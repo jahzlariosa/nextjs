@@ -160,52 +160,10 @@ export function SignUpForm() {
         console.log('Sign up successful:', data)
         authNotifications.signUpSuccess()
         
-        if (data.user) {
-          // Create profile
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .insert({
-              id: data.user.id,
-              username: username,
-              full_name: fullName,
-            })
-
-          if (profileError) {
-            console.error('Error creating profile:', profileError)
-            authNotifications.databaseError()
-            setError(profileError.message)
-            return
-          }
-
-          // Assign default role
-          const { data: roleData, error: roleError } = await supabase
-            .from('roles')
-            .select('id')
-            .eq('name', 'user')
-            .single()
-
-          if (roleError || !roleData) {
-            console.error('Error fetching user role:', roleError)
-            authNotifications.databaseError()
-            setError(roleError?.message || 'Could not find user role')
-            return
-          }
-
-          const { error: profileRoleError } = await supabase
-            .from('profile_roles')
-            .insert({
-              profile_id: data.user.id,
-              role_id: roleData.id,
-            })
-
-          if (profileRoleError) {
-            console.error('Error assigning role:', profileRoleError)
-            authNotifications.databaseError()
-            setError(profileRoleError.message)
-            return
-          }
-        }
+        // Give the database trigger a moment to create the profile
+        await new Promise(resolve => setTimeout(resolve, 500))
         
+        // Profile will be automatically created via database trigger
         router.push('/dashboard')
         router.refresh()
       }
