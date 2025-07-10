@@ -1,59 +1,62 @@
-# Documentation
+# Documentation Hub - Next.js + Supabase + PRP
 
-This directory contains all documentation for the Next.js 15 + Supabase SSR Authentication project.
+This directory contains reference documentation for the Next.js 15 + Supabase project using the PRP (Product Requirement Prompt) development methodology.
 
-## 📁 Directory Structure
+## 🎯 Primary Development Approach
 
-### `/guides/`
-User-facing guides and tutorials for getting started and using the application.
+**This project uses PRP methodology for feature development.** For active development, see:
+- **[PRP Integration Guide](../PRPs/INTEGRATION_GUIDE.md)** - How to use PRP methodology
+- **[PRP Templates](../PRPs/templates/)** - Templates for different feature types
+- **[Project Guidelines](../CLAUDE.md)** - Coding standards and patterns
 
-- **[Quick Start Guide](./guides/QUICK_START.md)** - Get up and running quickly
-- **[Testing Guide](./guides/TESTING_GUIDE.md)** - How to test the application
+## 📚 Reference Documentation
 
-### `/development/`
-Documentation for developers working on the project.
+### Essential Guides
+- **[Setup Guide](./SETUP_GUIDE.md)** - Complete project setup and getting started
+- **[Project Reference](./PROJECT_REFERENCE.md)** - Current features, status, and architecture
 
-- **[Development Guide](./development/DEVELOPMENT_GUIDE.md)** - Development setup and workflow
-- **[Project Status](./development/PROJECT_STATUS.md)** - Current project status and roadmap
-- **[Implementation Summary](./development/IMPLEMENTATION_SUMMARY.md)** - Overview of implemented features
-- **[Signup Improvements](./development/SIGNUP_IMPROVEMENTS.md)** - Sign-up flow enhancements
-
-### `/architecture/`
-System architecture and workflow documentation.
-
-- **[Authentication Workflow](./architecture/AUTHENTICATION_WORKFLOW.md)** - Complete auth flow documentation
-
-### `/troubleshooting/`
-Troubleshooting guides and fix documentation.
-
-- **[Database Error Fix](./troubleshooting/DATABASE_ERROR_FIX.md)** - Fix for sign-up database errors
-- **[Route Fix Summary](./troubleshooting/ROUTE_FIX_SUMMARY.md)** - Summary of routing structure fixes
-- **[Route Cleanup](./troubleshooting/ROUTE_CLEANUP.md)** - Route organization improvements
+### Technical Documentation
+- **[Authentication Workflow](./architecture/AUTHENTICATION_WORKFLOW.md)** - Detailed auth flow
+- **[Avatar API](./api/AVATAR_API.md)** - Avatar upload API reference
+- **[Testing Guide](./guides/TESTING_GUIDE.md)** - Testing procedures
 
 ## 🚀 Quick Navigation
 
-### New to the Project?
-Start with the [Quick Start Guide](./guides/QUICK_START.md)
+### 🆕 New to the Project?
+1. Read the [Setup Guide](./SETUP_GUIDE.md)
+2. Study the [Project Reference](./PROJECT_REFERENCE.md)
+3. Learn [PRP methodology](../PRPs/INTEGRATION_GUIDE.md)
 
-### Setting Up Development?
-Check the [Development Guide](./development/DEVELOPMENT_GUIDE.md)
+### 🛠️ Ready to Build Features?
+1. Use PRP commands: `/create-base-prp [feature description]`
+2. Follow the [Project Guidelines](../CLAUDE.md)
+3. Reference [Next.js patterns](../PRPs/ai_docs/nextjs_patterns.md)
 
-### Need to Understand the Auth Flow?
-Read the [Authentication Workflow](./architecture/AUTHENTICATION_WORKFLOW.md)
+### 🐛 Running into Issues?
+1. Check the [Setup Guide troubleshooting](./SETUP_GUIDE.md#troubleshooting)
+2. Review [Authentication Workflow](./architecture/AUTHENTICATION_WORKFLOW.md)
+3. Use `/debug` command for development issues
 
-### Running into Issues?
-Browse the [Troubleshooting](./troubleshooting/) section
-
-### Want to Run Tests?
+### 🧪 Testing Your Code?
 Follow the [Testing Guide](./guides/TESTING_GUIDE.md)
 
-## 📝 Contributing to Documentation
+## 📝 Documentation Philosophy
 
-When adding new documentation:
+### PRP-First Development
+- **Active development** uses PRPs in `/PRPs/` directory
+- **Reference docs** provide context and setup information
+- **AI-assisted** development with comprehensive context
 
-1. **Guides**: User-facing tutorials, how-tos, and getting started content
-2. **Development**: Developer-focused implementation details, status updates
-3. **Architecture**: System design, data flow, and technical architecture
-4. **Troubleshooting**: Problem resolution, fixes, and debugging guides
+### Documentation Types
+1. **PRP Files**: Active feature development (primary method)
+2. **Reference Docs**: Setup, architecture, and API documentation
+3. **Guidelines**: Project standards and patterns (`CLAUDE.md`)
+4. **AI Context**: Documentation optimized for AI assistance
 
-Keep documentation organized, up-to-date, and include clear examples where possible.
+## 🔄 Maintenance
+
+- **PRPs are self-documenting** - Each feature creates its own documentation
+- **Reference docs are stable** - Updated only when architecture changes
+- **Guidelines evolve** - Updated as project patterns mature
+
+This structure supports both human developers and AI-assisted development workflows.
