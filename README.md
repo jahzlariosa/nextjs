@@ -30,18 +30,21 @@ A modern, production-ready Next.js application with Supabase authentication, use
 
 ### Development
 - **TypeScript** for type safety
-- **Next.js 15** with App Router
-- **Tailwind CSS** for styling
-- **ESLint** configuration
-- **Turbopack** for fast development
-- **Component Library** with Shadcn/ui
+- **Next.js 15** with App Router and Server Components
+- **Tailwind CSS 4** for modern styling
+- **ESLint** configuration with Next.js rules
+- **Turbopack** for fast development builds
+- **Component Library** with shadcn/ui and Radix UI
+- **Server-Side Rendering** for optimal performance
 
 ### Database
-- **PostgreSQL** with Supabase
-- **Database Migrations** included
-- **File Storage** for avatars
-- **Real-time Subscriptions** ready
-- **Comprehensive Schema** with profiles and roles
+- **PostgreSQL** with Supabase backend
+- **Database Migrations** with comprehensive schema
+- **File Storage** for avatars and uploads
+- **Row Level Security (RLS)** for data protection
+- **Real-time Subscriptions** capability
+- **Automatic Profile Creation** via database triggers
+- **Role-Based Access Control** system
 
 ## 📁 Project Structure
 
@@ -189,12 +192,14 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_production_supabase_anon_key
 
 The application includes comprehensive documentation accessible at `/docs`:
 
-- **Quick Start**: Get started quickly
-- **Authentication**: Complete auth system guide
-- **Components**: UI component documentation
-- **Installation**: Detailed setup instructions
-- **Features**: Feature explanations
-- **Deployment**: Production deployment guide
+- **Quick Start**: Get started quickly with setup instructions
+- **Authentication**: Complete auth system guide and overview
+- **Components**: UI component documentation (Layout, UI, Profile)
+- **Features**: Feature explanations (Authentication, Avatar Upload)
+- **Installation**: Detailed setup and environment configuration
+- **Deployment**: Production deployment guide and best practices
+- **Changelog**: Track all updates and improvements
+- **Packages**: Core dependencies and libraries overview
 
 ## 🔒 Security
 
@@ -257,4 +262,5 @@ Built with:
 - TypeScript 5+
 - Tailwind CSS 4
 - Supabase 2.50.3
-- Shadcn/ui components
+- shadcn/ui + Radix UI components
+- React Hook Form 7.60.0 + Zod 3.25.75

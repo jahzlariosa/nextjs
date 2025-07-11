@@ -66,6 +66,28 @@
 - Input validation with Zod
 - CORS properly configured
 
+## 🧹 Code Quality Standards
+
+### Linting & Type Safety
+- **Zero ESLint errors/warnings** - Run `npm run lint` before commits
+- **Zero TypeScript errors** - Maintain strict type safety
+- **Clean imports** - Remove unused imports and variables
+- **Consistent formatting** - Follow ESLint configuration
+
+### Code Review Checklist
+- [ ] All lint errors resolved (`npm run lint` passes)
+- [ ] No TypeScript compilation errors
+- [ ] Unused imports/variables removed
+- [ ] Component props properly typed
+- [ ] Error handling implemented
+- [ ] Security patterns followed
+
+### Performance Guidelines
+- Use Server Components when possible
+- Optimize bundle size by removing unused code
+- Implement proper loading states
+- Use proper caching strategies
+
 ## 📝 Naming Conventions
 
 ### Files
@@ -179,13 +201,21 @@ Currently no known critical issues. All major authentication flows are functiona
 
 ## 💡 Tips for AI Agents
 
-1. Always check this file first for project context
-2. Review recent changelogs for implementation patterns
-3. Use existing components before creating new ones
-4. Follow the established security patterns
-5. Update this file when making significant changes
-6. Refer to `.ai/workflows/` for detailed implementation guides
-7. Use the established naming conventions consistently
-8. Always implement proper RLS policies for new tables
-9. Test authentication flows after making auth-related changes
-10. Use TypeScript interfaces from `lib/types/` for consistency
+1. **ALWAYS run `npm run lint` before completing any task** - Zero lint errors are required
+2. Always check this file first for project context
+3. Review recent changelogs for implementation patterns
+4. Use existing components before creating new ones
+5. Follow the established security patterns
+6. Update this file when making significant changes
+7. Refer to `.ai/workflows/` for detailed implementation guides
+8. Use the established naming conventions consistently
+9. Always implement proper RLS policies for new tables
+10. Test authentication flows after making auth-related changes
+11. Use TypeScript interfaces from `lib/types/` for consistency
+12. **Update CHANGELOG.md** when adding significant features
+13. **Prefer markdown files** for content that changes frequently (like changelogs)
+14. **Parse markdown dynamically** rather than hardcoding content in React components
+11. **ALWAYS run `npm run lint` before committing code - ensure zero lint errors**
+12. Fix any TypeScript errors immediately - maintain type safety
+13. Remove unused imports and variables to keep code clean
+14. Follow ESLint rules for consistent code formatting

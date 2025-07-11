@@ -7,9 +7,7 @@ import {
   BookOpen, 
   Zap, 
   Shield, 
-  Database, 
   Palette, 
-  Settings, 
   Users,
   Code,
   Rocket,
@@ -31,8 +29,6 @@ const docsNavigation = [
     title: 'Authentication',
     items: [
       { title: 'Overview', href: '/docs/auth/overview', icon: Shield },
-      { title: 'Sign Up & Sign In', href: '/docs/auth/signup-signin', icon: Users },
-      { title: 'Session Management', href: '/docs/auth/sessions', icon: Settings },
     ]
   },
   {
@@ -46,23 +42,21 @@ const docsNavigation = [
   {
     title: 'Features',
     items: [
-      { title: 'Authentication', href: '/docs/features/authentication', icon: Shield },
+      { title: 'Authentication System', href: '/docs/features/authentication', icon: Shield },
       { title: 'Avatar Upload', href: '/docs/features/avatar-upload', icon: Image },
-    ]
-  },
-  {
-    title: 'Database',
-    items: [
-      { title: 'Schema', href: '/docs/database/schema', icon: Database },
-      { title: 'Row Level Security', href: '/docs/database/rls', icon: Shield },
-      { title: 'Migrations', href: '/docs/database/migrations', icon: FileText },
     ]
   },
   {
     title: 'Deployment',
     items: [
-      { title: 'Production Deployment', href: '/docs/deployment', icon: Rocket },
-      { title: 'Environment Setup', href: '/docs/deployment/env', icon: Settings },
+      { title: 'Production Setup', href: '/docs/deployment', icon: Rocket },
+    ]
+  },
+  {
+    title: 'Reference',
+    items: [
+      { title: 'Changelog', href: '/docs/changelog', icon: FileText },
+      { title: 'Packages', href: '/docs/packages', icon: Code },
     ]
   }
 ]
