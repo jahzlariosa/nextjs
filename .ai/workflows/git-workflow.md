@@ -68,59 +68,11 @@ npx husky install
 npx husky add .husky/pre-commit "npm run lint && npm run type-check"
 ```
 
-### GitHub Actions Workflows
-
-#### 1. CI/CD Pipeline (.github/workflows/ci.yml)
-```yaml
-name: CI/CD
-
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run type-check
-      - run: npm run build
-```
-
-#### 2. Auto-deployment (.github/workflows/deploy.yml)
-```yaml
-name: Deploy
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.ORG_ID }}
-          vercel-project-id: ${{ secrets.PROJECT_ID }}
-```
+### Local Development Automation
+- Use AI workflow triggers for automated quality checks
+- Pre-commit hooks ensure code quality
+- Manual deployment through Vercel CLI or dashboard
+- Local testing before pushing changes
 
 ## 📝 Daily Git Operations
 
@@ -277,10 +229,9 @@ git reset --soft HEAD~1
 - `#release-ready` - Prepares release branch
 
 ### Automated Actions
-1. Lint and type-check before commit
-2. Generate changelog from commits
-3. Update version numbers
-4. Create release tags
-5. Deploy to staging/production
+1. Lint and type-check before commit (via pre-commit hooks)
+2. AI-powered changelog generation
+3. Manual deployment through Vercel
+4. Code quality enforcement through AI workflows
 
 This Git workflow ensures code quality, maintains project history, and integrates seamlessly with our AI-powered development process.

@@ -19,6 +19,14 @@ A modern, production-ready Next.js application with Supabase authentication, use
 - **User Settings** management
 - **Real-time Profile Updates**
 
+### Admin Management
+- **Admin Dashboard** with comprehensive user oversight
+- **User Management** - Edit user details and manage roles
+- **Role Assignment** - Assign and remove user roles  
+- **Real-time Updates** - Immediate reflection of changes
+- **Professional Interface** - Dialog-based editing system
+- **Access Control** - Role-based admin access
+
 ### UI & Components
 - **Responsive Design** with mobile-first approach
 - **Modern Layout System** with header and footer
@@ -40,11 +48,12 @@ A modern, production-ready Next.js application with Supabase authentication, use
 ### Database
 - **PostgreSQL** with Supabase backend
 - **Database Migrations** with comprehensive schema
+- **Role-Based Access Control** with profiles, roles, and profile_roles tables
 - **File Storage** for avatars and uploads
 - **Row Level Security (RLS)** for data protection
 - **Real-time Subscriptions** capability
 - **Automatic Profile Creation** via database triggers
-- **Role-Based Access Control** system
+- **Admin Role Management** system
 
 ## 📁 Project Structure
 
@@ -59,12 +68,16 @@ src/
 │   │   ├── dashboard/
 │   │   ├── profile/
 │   │   └── settings/
+│   ├── admin/                  # Admin management routes
+│   │   ├── users/              # User management
+│   │   └── roles/              # Role management
 │   ├── auth/                   # Auth callbacks and API routes
 │   ├── docs/                   # Documentation pages
 │   ├── globals.css
 │   ├── layout.tsx
 │   └── page.tsx
 ├── components/
+│   ├── admin/                  # Admin management components
 │   ├── auth/                   # Authentication components
 │   ├── docs/                   # Documentation components
 │   ├── layout/                 # Layout components
@@ -72,6 +85,7 @@ src/
 │   ├── skeletons/              # Loading states
 │   └── ui/                     # Reusable UI components
 ├── lib/
+│   ├── admin/                  # Admin utilities and data fetching
 │   ├── supabase/               # Supabase client configuration
 │   ├── types/                  # TypeScript type definitions
 │   ├── avatar-service.ts       # Avatar upload service
@@ -113,6 +127,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 2. Run the migration files in your Supabase SQL editor:
    - `database/migrations/001_create_profiles_table.sql`
    - `database/migrations/010_recreate_handle_new_user_trigger.sql`
+3. Ensure proper RLS policies are enabled for admin functionality
 
 ### 5. Storage Setup
 1. Create a storage bucket named `avatars` in your Supabase project
@@ -141,11 +156,22 @@ The application will be available at `http://localhost:3000`
 - **Avatar Upload**: Upload and manage profile pictures
 - **Settings**: Manage account settings at `/settings`
 
+### Admin Management (Admin Role Required)
+- **Admin Dashboard**: Comprehensive overview at `/admin`
+- **User Management**: Edit user details at `/admin/users`
+- **Role Assignment**: Manage user roles and permissions
+- **Real-time Updates**: Changes reflect immediately
+
 ### Protected Routes
 The following routes require authentication:
 - `/dashboard` - Main dashboard
 - `/profile` - Profile management
 - `/settings` - User settings
+
+Admin-only routes (require admin role):
+- `/admin` - Admin dashboard
+- `/admin/users` - User management
+- `/admin/roles` - Role management
 
 ## 🔧 Configuration
 
@@ -176,11 +202,18 @@ npm run build
 npm start
 ```
 
-### Deploy to Vercel
+### Deploy to Vercel (Recommended)
 1. Push your code to GitHub
 2. Connect your repository to Vercel
 3. Set environment variables in Vercel dashboard
-4. Deploy automatically
+4. Deploy automatically on every push to main
+
+### Manual Deployment
+You can also deploy manually using Vercel CLI:
+```bash
+npm install -g vercel
+vercel --prod
+```
 
 ### Environment Variables for Production
 ```env
@@ -205,11 +238,13 @@ The application includes comprehensive documentation accessible at `/docs`:
 
 ### Row Level Security (RLS)
 - **Profile Access**: Users can only access their own profiles
-- **Public Profiles**: Optional public profile visibility
+- **Admin Access**: Admin role required for user management
+- **Role-Based Security**: Proper access control for admin functions
 - **Data Protection**: Secure data access patterns
 
 ### Session Management
 - **Middleware Protection**: Routes protected at the middleware level
+- **Role Validation**: Admin routes verify user roles
 - **Auto-refresh**: Sessions automatically refreshed
 - **Secure Cookies**: Secure session cookie handling
 
@@ -230,7 +265,8 @@ The application includes comprehensive documentation accessible at `/docs`:
 - `npm run dev` - Start development server with Turbopack
 - `npm run build` - Build for production
 - `npm run start` - Start production server
-- `npm run lint` - Run ESLint
+- `npm run lint` - Run ESLint for code quality
+- `npm run type-check` - Run TypeScript type checking
 
 ## 🤝 Contributing
 

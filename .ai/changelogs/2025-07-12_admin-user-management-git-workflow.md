@@ -20,11 +20,9 @@ Completed the admin user management functionality with edit user and manage role
 
 ### Git Workflow Infrastructure
 - ✅ **Comprehensive Git Documentation** (`.ai/workflows/git-workflow.md`)
-- ✅ **GitHub Actions CI/CD Pipeline** (`.github/workflows/ci.yml`)
-- ✅ **Automated Deployment** (`.github/workflows/deploy.yml`)
-- ✅ **Code Quality Checks** (`.github/workflows/code-quality.yml`)
-- ✅ **Updated AI Automation Triggers** - Git-related workflows
 - ✅ **Branch Strategy Documentation** - Feature/bugfix/hotfix conventions
+- ✅ **Local Development Workflow** - Quality checks and best practices
+- ✅ **Pre-commit Hook Guidelines** - Code quality enforcement
 
 ## 🔧 Technical Implementation
 

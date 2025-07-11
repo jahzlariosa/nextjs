@@ -97,10 +97,10 @@
 
 ### Code Quality Standards
 - ESLint configuration with TypeScript rules
-- Automated pre-commit hooks with lint checks
-- GitHub Actions for CI/CD pipeline
+- Pre-commit hooks with lint checks (when configured)
 - Conventional commit message format
 - Comprehensive documentation in `.ai/workflows/`
+- Manual deployment through Vercel dashboard or CLI
 
 ## 📝 Naming Conventions
 
@@ -120,13 +120,12 @@
 
 ### Last Updated: July 12, 2025
 - ✅ **Admin User Management System** - Complete edit user and manage roles functionality
-- ✅ **GitHub Actions CI/CD Pipeline** - Automated workflows for quality, deployment, and code checks
 - ✅ **Git Workflow Documentation** - Comprehensive branching strategy and automation
 - ✅ **Code Quality Standards** - ESLint compliance, TypeScript strict mode, cleanup completed
 - ✅ **AI Workflow Enhancements** - Updated automation triggers for git operations
 - ✅ **Database Admin Functions** - Real-time user/role management with proper error handling
 - ✅ **Dialog-based Admin Interface** - Professional user editing and role assignment dialogs
-- ✅ **Production-Ready Infrastructure** - Complete CI/CD pipeline with quality gates
+- ✅ **Production-Ready Infrastructure** - Local development with quality enforcement
 
 ## ⚠️ Known Issues
 
