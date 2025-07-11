@@ -215,7 +215,6 @@ Currently no known critical issues. All major authentication flows are functiona
 12. **Update CHANGELOG.md** when adding significant features
 13. **Prefer markdown files** for content that changes frequently (like changelogs)
 14. **Parse markdown dynamically** rather than hardcoding content in React components
-11. **ALWAYS run `npm run lint` before committing code - ensure zero lint errors**
-12. Fix any TypeScript errors immediately - maintain type safety
-13. Remove unused imports and variables to keep code clean
-14. Follow ESLint rules for consistent code formatting
+15. **Fix TypeScript errors immediately** - maintain type safety
+16. **Remove unused imports and variables** to keep code clean
+17. **Follow ESLint rules** for consistent code formatting
