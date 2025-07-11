@@ -33,9 +33,11 @@ import type { Profile } from '@/lib/types'
 interface HeaderProps {
   user?: SupabaseUser
   profile?: Profile
+  loading?: boolean
+  isBrave?: boolean
 }
 
-export function Header({ user, profile }: HeaderProps) {
+export function Header({ user, profile, loading = false, isBrave = false }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
   const supabase = createClient()
@@ -109,7 +111,17 @@ export function Header({ user, profile }: HeaderProps) {
 
         {/* Right Side */}
         <div className="flex items-center space-x-2">
-          {user ? (
+          {loading ? (
+            // Loading state - show skeleton to prevent flash
+            <div className="flex items-center space-x-2">
+              <div className="h-9 w-9 rounded-full bg-muted animate-pulse"></div>
+              {isBrave && (
+                <span className="text-xs text-muted-foreground hidden sm:inline">
+                  Loading...
+                </span>
+              )}
+            </div>
+          ) : user ? (
             <>
               {/* Notifications */}
               <Button variant="ghost" size="icon" className="relative h-9 w-9">
