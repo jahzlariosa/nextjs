@@ -8,6 +8,8 @@
 **`#commit-ready`** - Triggers pre-commit workflow  
 **`#release-ready`** - Triggers release preparation workflow
 **`#docs-update`** - Triggers documentation update workflow
+**`#git-cleanup`** - Triggers git cleanup workflow
+**`#merge-ready`** - Triggers PR merge preparation workflow
 
 ### Secondary Keywords (Reminder triggers)
 
@@ -15,6 +17,7 @@
 **`#lint-check`** - Forces lint verification before proceeding
 **`#test-required`** - Triggers testing workflow
 **`#review-needed`** - Requests comprehensive code review
+**`#git-status`** - Shows current git status and suggests actions
 
 ## 🔄 Automated Workflow Triggers
 
@@ -59,6 +62,35 @@ AUTOMATED CHECKLIST:
 6. ✅ Test in multiple browsers if UI changes
 7. ✅ Commit with detailed message
 8. ✅ Push and verify deployment
+```
+
+### 4. Git Cleanup Workflow (`#git-cleanup`)
+**Auto-executes for post-merge cleanup**
+
+```markdown
+AUTOMATED CHECKLIST:
+1. ✅ Switch to main branch
+2. ✅ Pull latest changes from origin
+3. ✅ Delete merged feature branches locally
+4. ✅ Prune remote tracking branches
+5. ✅ Clean up stale references
+6. ✅ Check for uncommitted changes
+7. ✅ Verify repository status is clean
+```
+
+### 5. Merge Ready Workflow (`#merge-ready`)
+**Auto-executes before merging PR**
+
+```markdown
+AUTOMATED CHECKLIST:
+1. ✅ Ensure all CI checks pass
+2. ✅ Verify no merge conflicts
+3. ✅ Confirm branch is up to date with main
+4. ✅ Run final lint and type checks
+5. ✅ Update changelog if needed
+6. ✅ Check for proper PR description
+7. ✅ Verify all requirements met
+8. ✅ Ready for merge approval
 ```
 
 ## 🚨 Never-Forget Reminders

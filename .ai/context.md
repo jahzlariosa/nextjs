@@ -49,6 +49,13 @@
 - Client Components for interactive features
 - Proper loading and error states
 
+### Admin Management Pattern
+- Role-based access control with Supabase RLS
+- Dialog-based editing interfaces for user management
+- Real-time data updates after CRUD operations
+- Comprehensive error handling with toast notifications
+- Git workflow integration with automated CI/CD
+
 ### Component Pattern
 - Composition over inheritance
 - Props interfaces with TypeScript
@@ -88,6 +95,13 @@
 - Implement proper loading states
 - Use proper caching strategies
 
+### Code Quality Standards
+- ESLint configuration with TypeScript rules
+- Automated pre-commit hooks with lint checks
+- GitHub Actions for CI/CD pipeline
+- Conventional commit message format
+- Comprehensive documentation in `.ai/workflows/`
+
 ## 📝 Naming Conventions
 
 ### Files
@@ -105,26 +119,32 @@
 ## 🚀 Recent Changes
 
 ### Last Updated: July 12, 2025
-- Complete authentication system implemented with Supabase Auth
-- User registration, sign-in, and password reset flows functional
-- Database schema with profiles, roles, and profile_roles tables
-- Row Level Security (RLS) policies configured
-- Middleware protection for dashboard routes
-- Role-based access control system in place
-- Avatar upload functionality implemented
-- Admin user management system structure created
+- ✅ **Admin User Management System** - Complete edit user and manage roles functionality
+- ✅ **GitHub Actions CI/CD Pipeline** - Automated workflows for quality, deployment, and code checks
+- ✅ **Git Workflow Documentation** - Comprehensive branching strategy and automation
+- ✅ **Code Quality Standards** - ESLint compliance, TypeScript strict mode, cleanup completed
+- ✅ **AI Workflow Enhancements** - Updated automation triggers for git operations
+- ✅ **Database Admin Functions** - Real-time user/role management with proper error handling
+- ✅ **Dialog-based Admin Interface** - Professional user editing and role assignment dialogs
+- ✅ **Production-Ready Infrastructure** - Complete CI/CD pipeline with quality gates
 
 ## ⚠️ Known Issues
 
-Currently no known critical issues. All major authentication flows are functional and tested.
+Currently no known critical issues. All major features are functional and tested:
+- ✅ Authentication system fully operational
+- ✅ Admin user management with edit/role assignment working
+- ✅ Real-time data updates and error handling implemented
+- ✅ Code quality standards enforced with automated workflows
 
 ## 🎯 Current Focus Areas
 
-- Completing admin user management functionality
-- Implementing comprehensive user profile features
-- Adding role-based UI component rendering
-- Setting up deployment pipeline
-- Creating comprehensive test suite
+- ✅ **Admin user management functionality** - COMPLETED
+- ✅ **Git workflow and CI/CD infrastructure** - COMPLETED  
+- ✅ **Code quality standards and automation** - COMPLETED
+- 🔄 **Enhanced user profile features** - Next priority
+- 🔄 **Role-based UI component rendering** - Next priority
+- 🔄 **Comprehensive test suite** - Future enhancement
+- 🔄 **Performance monitoring and optimization** - Future enhancement
 
 ## 📊 Database Schema Overview
 
@@ -206,12 +226,16 @@ Currently no known critical issues. All major authentication flows are functiona
 - **`#commit-ready`** - Auto-execute pre-commit workflow (lint → changelog → commit → push)
 - **`#feature-complete`** - Full feature completion workflow
 - **`#docs-update`** - Documentation update workflow  
+- **`#git-cleanup`** - Clean up merged branches and remote references
+- **`#merge-ready`** - Prepare PR for merge (CI checks, conflicts, etc.)
 - **`#github-pull-request_copilot-coding-agent`** - Hand off to coding agent
 
 ### 🔄 Auto-Trigger Phrases (No # needed)
 - "ready to commit", "let's commit", "commit and push" → Pre-commit workflow
 - "everything looks good", "time to commit" → Pre-commit workflow
 - "feature complete", "ready to ship" → Feature completion workflow
+- "clean up git", "cleanup branches" → Git cleanup workflow
+- "ready to merge", "merge this PR" → Merge ready workflow
 
 ### 📋 Core Guidelines
 1. **ALWAYS run `npm run lint` before completing any task** - Zero lint errors are required
