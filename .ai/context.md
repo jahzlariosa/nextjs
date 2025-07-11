@@ -201,20 +201,42 @@ Currently no known critical issues. All major authentication flows are functiona
 
 ## 💡 Tips for AI Agents
 
+### 🤖 Automated Workflow Keywords
+**ALWAYS scan user messages for these trigger keywords:**
+- **`#commit-ready`** - Auto-execute pre-commit workflow (lint → changelog → commit → push)
+- **`#feature-complete`** - Full feature completion workflow
+- **`#docs-update`** - Documentation update workflow  
+- **`#github-pull-request_copilot-coding-agent`** - Hand off to coding agent
+
+### 🔄 Auto-Trigger Phrases (No # needed)
+- "ready to commit", "let's commit", "commit and push" → Pre-commit workflow
+- "everything looks good", "time to commit" → Pre-commit workflow
+- "feature complete", "ready to ship" → Feature completion workflow
+
+### 📋 Core Guidelines
 1. **ALWAYS run `npm run lint` before completing any task** - Zero lint errors are required
-2. Always check this file first for project context
-3. Review recent changelogs for implementation patterns
-4. Use existing components before creating new ones
-5. Follow the established security patterns
-6. Update this file when making significant changes
-7. Refer to `.ai/workflows/` for detailed implementation guides
-8. Use the established naming conventions consistently
-9. Always implement proper RLS policies for new tables
-10. Test authentication flows after making auth-related changes
-11. Use TypeScript interfaces from `lib/types/` for consistency
-12. **Update CHANGELOG.md** when adding significant features
-13. **Prefer markdown files** for content that changes frequently (like changelogs)
-14. **Parse markdown dynamically** rather than hardcoding content in React components
-15. **Fix TypeScript errors immediately** - maintain type safety
-16. **Remove unused imports and variables** to keep code clean
-17. **Follow ESLint rules** for consistent code formatting
+2. **ALWAYS check this file first** for project context
+3. **ALWAYS create AI changelog entries** for significant changes (`.ai/changelogs/YYYY-MM-DD-feature-name.md`)
+4. **ALWAYS update this context file** when making significant changes
+5. Review recent changelogs for implementation patterns
+6. Use existing components before creating new ones
+7. Follow the established security patterns
+8. Refer to `.ai/workflows/` for detailed implementation guides
+9. Use the established naming conventions consistently
+10. Always implement proper RLS policies for new tables
+11. Test authentication flows after making auth-related changes
+12. Use TypeScript interfaces from `lib/types/` for consistency
+13. **Update CHANGELOG.md** when adding significant features
+14. **Prefer markdown files** for content that changes frequently (like changelogs)
+15. **Parse markdown dynamically** rather than hardcoding content in React components
+16. **Fix TypeScript errors immediately** - maintain type safety
+17. **Remove unused imports and variables** to keep code clean
+18. **Follow ESLint rules** for consistent code formatting
+
+### 🚨 Never-Forget Checklist
+Before ANY significant action:
+- [ ] Scanned message for trigger keywords
+- [ ] Checked `.ai/context.md` for current state
+- [ ] Reviewed recent changelogs for patterns  
+- [ ] Planned changelog entry if needed
+- [ ] Verified lint status with `npm run lint`
