@@ -1,10 +1,18 @@
-# Next.js Full-Stack Application
+# Next.js Admin Management System
 
-A modern, production-ready Next.js application with Supabase authentication, user management, and comprehensive documentation. Built with TypeScript, Tailwind CSS, and Shadcn/ui components.
+A modern, production-ready Next.js application with comprehensive admin management, user authentication, and role-based access control. Built with TypeScript, Tailwind CSS, and Shadcn/ui components.
 
-## 🚀 Features
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/jahzlariosa/nextjs/releases/tag/v1.0.0)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](#)
 
-### Authentication & Security
+## 🎉 Version 1.0.0 Release
+
+This is the first major release featuring a complete admin management system with advanced user management capabilities, search functionality, and comprehensive documentation.
+
+## ✨ Key Features
+
+### 🔐 Authentication & Security
 - **Server-Side Rendering (SSR)** with Supabase Auth
 - **Automatic Profile Creation** on user signup
 - **Row Level Security (RLS)** for data protection
@@ -12,17 +20,19 @@ A modern, production-ready Next.js application with Supabase authentication, use
 - **Password Reset** functionality
 - **Protected Routes** with automatic redirection
 
-### User Management
+### 👥 Advanced User Management
 - **Complete Profile System** with customizable fields
 - **Avatar Upload** with drag-and-drop support
 - **Profile Editing** with form validation
 - **User Settings** management
 - **Real-time Profile Updates**
 
-### Admin Management
+### 🛡️ Admin Management System
 - **Admin Dashboard** with comprehensive user oversight
+- **Advanced User Search** - Search by name, username, role, or ID
+- **Pagination** - Efficient browsing with 10 users per page
 - **User Management** - Edit user details and manage roles
-- **Role Assignment** - Assign and remove user roles  
+- **Role Assignment** - Assign and remove user roles with checkboxes
 - **Real-time Updates** - Immediate reflection of changes
 - **Professional Interface** - Dialog-based editing system
 - **Access Control** - Role-based admin access
