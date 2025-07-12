@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.3] - 2025-07-12
 
 ### 🚀 Major Features
 
@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automatic profile creation triggers with role assignment
 - Admin-only functions for secure operations (`get_user_emails`, role checks)
 - Optimized RLS policies for all tables with proper security
+
+## [Unreleased]
 - Storage bucket setup with avatar upload policies and file restrictions
 - Performance indexes on frequently queried fields
 - Helper views for complex queries (`user_profiles_with_roles`)
