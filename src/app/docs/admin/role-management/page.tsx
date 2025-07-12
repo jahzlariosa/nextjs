@@ -82,7 +82,7 @@ export default function RoleManagementPage() {
               <h4 className="font-semibold mb-2">Creating a Role:</h4>
               <ol className="list-decimal list-inside space-y-1 text-sm">
                 <li>Navigate to <code>/admin/roles</code></li>
-                <li>Click the "Create Role" button</li>
+                <li>Click the &quot;Create Role&quot; button</li>
                 <li>Enter a unique role name in the prompt</li>
                 <li>The role is created immediately</li>
                 <li>Assign the role to users as needed</li>
@@ -92,7 +92,7 @@ export default function RoleManagementPage() {
             <div className="space-y-2">
               <h4 className="font-semibold">Role Naming Guidelines:</h4>
               <ul className="text-sm space-y-1 text-muted-foreground">
-                <li>• Use lowercase names (e.g., "moderator", "editor")</li>
+                <li>• Use lowercase names (e.g., &quot;moderator&quot;, &quot;editor&quot;)</li>
                 <li>• Keep names descriptive and clear</li>
                 <li>• Avoid spaces and special characters</li>
                 <li>• Role names must be unique</li>
@@ -123,9 +123,9 @@ export default function RoleManagementPage() {
                   <li>Go to <code>/admin/users</code></li>
                   <li>Find the user in the table</li>
                   <li>Click the dropdown menu (⋯)</li>
-                  <li>Select "Manage roles"</li>
+                  <li>Select &quot;Manage roles&quot;</li>
                   <li>Check/uncheck roles as needed</li>
-                  <li>Click "Update Roles"</li>
+                  <li>Click &quot;Update Roles&quot;</li>
                 </ol>
               </div>
               <div>

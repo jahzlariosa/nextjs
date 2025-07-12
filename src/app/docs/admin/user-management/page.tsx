@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Users, Edit, UserPlus, Shield, Database } from 'lucide-react'
+import { Users, Edit, Shield, Database } from 'lucide-react'
 
 export default function UserManagementPage() {
   return (
@@ -19,7 +19,7 @@ export default function UserManagementPage() {
       <Alert>
         <Shield className="h-4 w-4" />
         <AlertDescription>
-          User management features are only accessible to users with the "admin" role. 
+          User management features are only accessible to users with the &quot;admin&quot; role. 
           All actions are logged and changes are applied in real-time.
         </AlertDescription>
       </Alert>
@@ -68,7 +68,7 @@ export default function UserManagementPage() {
                 <h5 className="font-medium">Edit User Details</h5>
                 <ul className="text-sm space-y-1 text-muted-foreground">
                   <li>• Click the dropdown menu (⋯) for any user</li>
-                  <li>• Select "Edit user details"</li>
+                  <li>• Select &quot;Edit user details&quot;</li>
                   <li>• Update username and full name</li>
                   <li>• Changes are saved immediately</li>
                 </ul>
@@ -76,7 +76,7 @@ export default function UserManagementPage() {
               <div className="space-y-2">
                 <h5 className="font-medium">Manage Roles</h5>
                 <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• Click "Manage roles" from the dropdown</li>
+                  <li>• Click &quot;Manage roles&quot; from the dropdown</li>
                   <li>• Select/deselect roles using checkboxes</li>
                   <li>• Multiple roles can be assigned</li>
                   <li>• Role changes update instantly</li>
@@ -87,8 +87,8 @@ export default function UserManagementPage() {
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
               <h5 className="font-medium mb-2">Editable Fields:</h5>
               <div className="grid gap-2 text-sm">
-                <div><strong>Username:</strong> User's display name/handle</div>
-                <div><strong>Full Name:</strong> User's complete name</div>
+                <div><strong>Username:</strong> User&apos;s display name/handle</div>
+                <div><strong>Full Name:</strong> User&apos;s complete name</div>
                 <div><strong>Roles:</strong> System roles assigned to the user</div>
               </div>
             </div>

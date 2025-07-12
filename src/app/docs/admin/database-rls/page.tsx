@@ -20,7 +20,7 @@ export default function DatabaseRLSPage() {
         <Database className="h-4 w-4" />
         <AlertDescription>
           Row Level Security (RLS) provides database-level protection, ensuring users can only access 
-          data they're authorized to see, even if application code is compromised.
+          data they&apos;re authorized to see, even if application code is compromised.
         </AlertDescription>
       </Alert>
 

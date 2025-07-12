@@ -110,7 +110,7 @@ WHERE schemaname = 'public';`}
                     If you already have a user account created:
                   </div>
                   <ol className="list-decimal list-inside space-y-1 text-sm text-blue-700 dark:text-blue-300">
-                    <li>Sign up through your application's normal signup process</li>
+                    <li>Sign up through your application&apos;s normal signup process</li>
                     <li>Note your user ID from the auth.users table or profile</li>
                     <li>Run this SQL to assign admin role:</li>
                   </ol>
@@ -131,12 +131,12 @@ WHERE r.name = 'admin';`}
                 <h4 className="font-semibold mb-2">Method 2: Supabase Dashboard</h4>
                 <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg space-y-3">
                   <div className="text-sm text-amber-800 dark:text-amber-200">
-                    Using Supabase's user management:
+                    Using Supabase&apos;s user management:
                   </div>
                   <ol className="list-decimal list-inside space-y-1 text-sm text-amber-700 dark:text-amber-300">
                     <li>Go to Authentication → Users in Supabase dashboard</li>
                     <li>Create a new user or invite via email</li>
-                    <li>Copy the user's UUID from the users table</li>
+                    <li>Copy the user&apos;s UUID from the users table</li>
                     <li>Use the SQL from Method 1 to assign admin role</li>
                   </ol>
                 </div>
@@ -306,7 +306,7 @@ ADMIN_SECRET_KEY=your-admin-secret`}
                 <div className="space-y-3">
                   <div className="bg-amber-50 dark:bg-amber-900/20 p-3 rounded">
                     <div className="font-medium text-amber-800 dark:text-amber-200 text-sm">
-                      "Access Denied" on Admin Dashboard
+                      &quot;Access Denied&quot; on Admin Dashboard
                     </div>
                     <div className="text-xs text-amber-700 dark:text-amber-300 mt-1">
                       Check: User has admin role assignment, RLS policies are correct, middleware is working
@@ -314,7 +314,7 @@ ADMIN_SECRET_KEY=your-admin-secret`}
                   </div>
                   <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded">
                     <div className="font-medium text-red-800 dark:text-red-200 text-sm">
-                      "Cannot Edit Users" Error
+                      &quot;Cannot Edit Users&quot; Error
                     </div>
                     <div className="text-xs text-red-700 dark:text-red-300 mt-1">
                       Check: Service role key is set, admin policies allow modifications, database connection is working
@@ -322,7 +322,7 @@ ADMIN_SECRET_KEY=your-admin-secret`}
                   </div>
                   <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded">
                     <div className="font-medium text-blue-800 dark:text-blue-200 text-sm">
-                      "Profile Not Found" Issues
+                      &quot;Profile Not Found&quot; Issues
                     </div>
                     <div className="text-xs text-blue-700 dark:text-blue-300 mt-1">
                       Check: Profile creation trigger is working, user signup process creates profiles properly

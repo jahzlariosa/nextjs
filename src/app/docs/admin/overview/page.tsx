@@ -141,7 +141,7 @@ export default function AdminOverviewPage() {
               Getting Started with Admin
             </h3>
             <p className="text-blue-800 dark:text-blue-200 text-sm">
-              To access admin features, you need an account with the "admin" role. 
+              To access admin features, you need an account with the &quot;admin&quot; role. 
               The admin dashboard provides a comprehensive interface for managing users and roles.
             </p>
             <div className="pt-2">
