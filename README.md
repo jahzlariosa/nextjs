@@ -18,6 +18,8 @@ This is a **comprehensive starter template** for Next.js applications with Supab
 - ✅ **TypeScript** for type safety
 - ✅ **Production-ready** architecture
 
+> **🚀 NEW in v1.0.1:** Complete database schema export for instant setup! No more manual migrations - get your entire database ready with one SQL file.
+
 ## 🚀 Perfect for Building
 
 - **🌐 Business Websites** - Company sites with user accounts
@@ -102,11 +104,31 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
-### 3. Set Up Database
-1. Run the migration scripts in your Supabase SQL Editor:
-   - `database/migrations/001_create_profiles_table.sql`
-   - `database/migrations/010_recreate_handle_new_user_trigger.sql`
-2. Verify tables are created: `profiles`, `roles`, `profile_roles`
+### 3. Set Up Database (One-Click Setup)
+**🚀 FASTEST METHOD:** Use our complete schema export for instant setup:
+
+1. Open your Supabase project dashboard
+2. Navigate to **SQL Editor** 
+3. Copy the entire contents of `database/full_schema_export.sql`
+4. Paste and **RUN** the script
+
+**That's it!** This single file sets up:
+- ✅ All tables with proper relationships
+- ✅ Authentication triggers and functions  
+- ✅ Row Level Security (RLS) policies
+- ✅ Storage buckets for avatars
+- ✅ Default roles (user, admin, moderator)
+- ✅ Performance indexes and views
+
+<details>
+<summary>📋 Alternative: Manual Migration Setup</summary>
+
+If you prefer step-by-step setup:
+1. Run `database/migrations/001_create_profiles_table.sql`
+2. Run `database/migrations/010_recreate_handle_new_user_trigger.sql`
+
+But the complete schema export is much faster and includes additional optimizations.
+</details>
 
 ### 4. Start Development
 ```bash
@@ -209,8 +231,10 @@ npm run lint         # Run ESLint
 
 After starting your development server, visit these pages:
 - `/docs` - Complete documentation and guides
-- `/docs/admin/setup` - Admin system setup (if using admin features)
+- `/docs/database/schema` - **NEW: Complete database schema setup guide**
+- `/docs/quick-start` - Get running in 5 minutes with fast setup
 - `/docs/installation` - Detailed installation guide
+- `/docs/admin/setup` - Admin system setup (if using admin features)
 - `/docs/components` - UI component documentation
 
 ## 🤝 Contributing

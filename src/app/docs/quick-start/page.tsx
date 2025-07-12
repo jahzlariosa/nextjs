@@ -99,110 +99,61 @@ export default function QuickStartPage() {
                 4
               </div>
               <div>
-                <CardTitle>Database Setup</CardTitle>
-                <CardDescription>Create the required tables and policies</CardDescription>
+                <CardTitle>Database Setup (One-Click)</CardTitle>
+                <CardDescription>🚀 Complete schema setup in one command</CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Run this SQL in your Supabase SQL editor:
-            </p>
-            <div className="bg-muted p-4 rounded-lg text-sm">
-              <code>
-                {`-- Create profiles table
-CREATE TABLE profiles (
-  id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
-  username text UNIQUE,
-  full_name text,
-  avatar_url text,
-  bio text,
-  website text,
-  location text,
-  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
-  updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
-  PRIMARY KEY (id)
-);
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-medium text-blue-800 mb-2">✨ New: Complete Schema Export</h4>
+              <p className="text-sm text-blue-700">
+                We&apos;ve created a complete database schema that sets up everything in one go!
+              </p>
+            </div>
+            
+            <div className="space-y-3">
+              <h4 className="font-medium">Step 1: Open Supabase SQL Editor</h4>
+              <ol className="list-decimal list-inside space-y-1 text-sm ml-4">
+                <li>Go to your Supabase project dashboard</li>
+                <li>Navigate to <strong>SQL Editor</strong></li>
+                <li>Create a new query</li>
+              </ol>
+            </div>
 
--- Create roles table
-CREATE TABLE roles (
-  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
-  name text UNIQUE NOT NULL,
-  created_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL,
-  updated_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL
-);
+            <div className="space-y-3">
+              <h4 className="font-medium">Step 2: Run the Complete Schema</h4>
+              <ol className="list-decimal list-inside space-y-1 text-sm ml-4">
+                <li>Open <code>database/full_schema_export.sql</code> from your project</li>
+                <li>Copy the entire file contents</li>
+                <li>Paste into the SQL Editor and <strong>RUN</strong></li>
+              </ol>
+            </div>
 
--- Create profile_roles join table
-CREATE TABLE profile_roles (
-  profile_id uuid REFERENCES profiles(id) ON DELETE CASCADE,
-  role_id uuid REFERENCES roles(id) ON DELETE CASCADE,
-  created_at timestamptz DEFAULT timezone('utc'::text, now()) NOT NULL,
-  PRIMARY KEY (profile_id, role_id)
-);
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <h4 className="font-medium text-green-800 mb-2">🎉 This sets up everything:</h4>
+              <div className="grid md:grid-cols-2 gap-2 text-sm text-green-700">
+                <ul className="space-y-1">
+                  <li>✅ User profiles table</li>
+                  <li>✅ Roles & permissions</li>
+                  <li>✅ Authentication triggers</li>
+                  <li>✅ RLS security policies</li>
+                </ul>
+                <ul className="space-y-1">
+                  <li>✅ Avatar storage bucket</li>
+                  <li>✅ Admin functions</li>
+                  <li>✅ Performance indexes</li>
+                  <li>✅ Default roles data</li>
+                </ul>
+              </div>
+            </div>
 
--- Enable RLS
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE roles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE profile_roles ENABLE ROW LEVEL SECURITY;
-
--- Create policies
-CREATE POLICY "Users can view own profile" ON profiles
-  FOR SELECT USING (auth.uid() = id);
-
-CREATE POLICY "Users can update own profile" ON profiles
-  FOR UPDATE USING (auth.uid() = id);
-
-CREATE POLICY "Users can insert own profile" ON profiles
-  FOR INSERT WITH CHECK (auth.uid() = id);
-
-CREATE POLICY "Authenticated users can view roles" ON roles
-  FOR SELECT TO authenticated USING (true);
-
-CREATE POLICY "Users can view their own roles" ON profile_roles
-  FOR SELECT USING (auth.uid() = profile_id);
-
--- Create storage bucket for avatars
-INSERT INTO storage.buckets (id, name, public) VALUES ('avatars', 'avatars', true);
-
--- Create storage policy
-CREATE POLICY "Avatar images are publicly accessible" ON storage.objects
-  FOR SELECT USING (bucket_id = 'avatars');
-
-CREATE POLICY "Users can upload their own avatar" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'avatars' AND auth.uid()::text = (storage.foldername(name))[1]);
-
--- Create function for new user
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS trigger AS $$
-DECLARE
-  user_role_id uuid;
-BEGIN
-  -- Create the user profile
-  INSERT INTO public.profiles (id, username, full_name)
-  VALUES (
-    NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'username', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1))
-  );
-
-  -- Get the 'user' role ID
-  SELECT id INTO user_role_id FROM public.roles WHERE name = 'user' LIMIT 1;
-
-  -- Assign the 'user' role to the new profile
-  IF user_role_id IS NOT NULL THEN
-    INSERT INTO public.profile_roles (profile_id, role_id)
-    VALUES (NEW.id, user_role_id);
-  END IF;
-
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
-
--- Create trigger
-CREATE TRIGGER on_auth_user_created
-  AFTER INSERT ON auth.users
-  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();`}
-              </code>
+            <div className="bg-gray-50 p-4 rounded-lg border">
+              <h4 className="font-medium text-gray-800 mb-2">📄 File Location:</h4>
+              <code className="text-sm bg-white px-2 py-1 rounded border">database/full_schema_export.sql</code>
+              <p className="text-sm text-gray-600 mt-1">
+                This file contains 400+ lines of optimized SQL that replaces all individual migration files.
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -236,19 +187,34 @@ CREATE TRIGGER on_auth_user_created
         <CardHeader>
           <div className="flex items-center gap-3">
             <CheckCircle className="w-6 h-6 text-green-600" />
-            <CardTitle className="text-green-800">You&apos;re Ready!</CardTitle>
+            <CardTitle className="text-green-800">You&apos;re Ready to Build!</CardTitle>
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-green-700 text-sm">
-            Your Next.js + Supabase application is now running. You can:
+          <p className="text-green-700 text-sm mb-3">
+            Your Next.js + Supabase application is now running with a complete, production-ready setup:
           </p>
-          <ul className="text-green-700 text-sm mt-2 space-y-1">
-            <li>• Create an account at <code>/sign-up</code></li>
-            <li>• Sign in at <code>/sign-in</code></li>
-            <li>• Access your dashboard at <code>/dashboard</code></li>
-            <li>• Update your profile at <code>/profile</code></li>
-          </ul>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <h4 className="font-medium text-green-800 mb-2">🔐 Authentication Ready</h4>
+              <ul className="text-green-700 text-sm space-y-1">
+                <li>• Create accounts at <code>/sign-up</code></li>
+                <li>• Sign in at <code>/sign-in</code></li>
+                <li>• Password reset functionality</li>
+                <li>• Automatic profile creation</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-medium text-green-800 mb-2">⚡ Features Available</h4>
+              <ul className="text-green-700 text-sm space-y-1">
+                <li>• User dashboard at <code>/dashboard</code></li>
+                <li>• Profile management at <code>/profile</code></li>
+                <li>• Avatar upload system</li>
+                <li>• Role-based access control</li>
+                <li>• Admin panel (if admin role)</li>
+              </ul>
+            </div>
+          </div>
         </CardContent>
       </Card>
 

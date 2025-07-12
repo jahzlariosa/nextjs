@@ -13,7 +13,8 @@ import {
   Rocket,
   FileText,
   Layout,
-  Image
+  Image,
+  Database
 } from 'lucide-react'
 
 const docsNavigation = [
@@ -29,6 +30,12 @@ const docsNavigation = [
     title: 'Authentication',
     items: [
       { title: 'Overview', href: '/docs/auth/overview', icon: Shield },
+    ]
+  },
+  {
+    title: 'Database',
+    items: [
+      { title: 'Schema Setup', href: '/docs/database/schema', icon: Database },
     ]
   },
   {
