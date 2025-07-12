@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
-import { MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal, Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -63,6 +63,36 @@ export function UsersTable() {
   })
   const [selectedUserRoles, setSelectedUserRoles] = useState<string[]>([])
   const [updatingUser, setUpdatingUser] = useState(false)
+  
+  // Search and pagination state
+  const [searchQuery, setSearchQuery] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [usersPerPage] = useState(10)
+
+  // Filter and paginate users
+  const filteredUsers = useMemo(() => {
+    if (!searchQuery.trim()) return users
+    
+    const query = searchQuery.toLowerCase()
+    return users.filter(user => 
+      user.full_name?.toLowerCase().includes(query) ||
+      user.username?.toLowerCase().includes(query) ||
+      user.roles.some(role => role.name.toLowerCase().includes(query)) ||
+      user.id.toLowerCase().includes(query)
+    )
+  }, [users, searchQuery])
+
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * usersPerPage
+    return filteredUsers.slice(startIndex, startIndex + usersPerPage)
+  }, [filteredUsers, currentPage, usersPerPage])
+
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage)
+
+  // Reset to first page when search changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery])
 
   useEffect(() => {
     fetchUsers()
@@ -237,6 +267,22 @@ export function UsersTable() {
         </div>
       </div>
 
+      {/* Search bar */}
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Search users by name, username, role, or ID..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <div className="text-sm text-muted-foreground">
+          {filteredUsers.length} of {users.length} users
+        </div>
+      </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -249,7 +295,14 @@ export function UsersTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
+            {paginatedUsers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="h-24 text-center">
+                  {searchQuery ? 'No users found matching your search.' : 'No users found.'}
+                </TableCell>
+              </TableRow>
+            ) : (
+              paginatedUsers.map((user) => (
               <TableRow key={user.id}>
                 <TableCell className="flex items-center space-x-3">
                   <Avatar className="h-8 w-8">
@@ -310,10 +363,52 @@ export function UsersTable() {
                   </DropdownMenu>
                 </TableCell>
               </TableRow>
-            ))}
+            )))}
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Showing {((currentPage - 1) * usersPerPage) + 1} to {Math.min(currentPage * usersPerPage, filteredUsers.length)} of {filteredUsers.length} users
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
+                <Button
+                  key={pageNum}
+                  variant={currentPage === pageNum ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentPage(pageNum)}
+                  className="w-10"
+                >
+                  {pageNum}
+                </Button>
+              ))}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Edit User Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>

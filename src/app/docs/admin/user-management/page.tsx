@@ -43,10 +43,14 @@ export default function UserManagementPage() {
               <p className="text-sm mt-2">
                 <strong>Requirements:</strong> Admin role and active session
               </p>
+              <p className="text-sm mt-2">
+                <strong>Features:</strong> Search, pagination, real-time updates
+              </p>
             </div>
             <p>
               The user management interface displays all registered users in a table format, 
-              showing their profile information, assigned roles, and registration date.
+              showing their profile information, assigned roles, and registration date. The interface 
+              includes powerful search functionality and pagination for managing large user bases efficiently.
             </p>
           </CardContent>
         </Card>
@@ -65,22 +69,46 @@ export default function UserManagementPage() {
             <h4 className="font-semibold">Available Actions:</h4>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <h5 className="font-medium">Edit User Details</h5>
+                <h5 className="font-medium">Search & Navigation</h5>
                 <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• Click the dropdown menu (⋯) for any user</li>
-                  <li>• Select &quot;Edit user details&quot;</li>
-                  <li>• Update username and full name</li>
-                  <li>• Changes are saved immediately</li>
+                  <li>• Search by name, username, role, or user ID</li>
+                  <li>• Real-time filtering as you type</li>
+                  <li>• Pagination with 10 users per page</li>
+                  <li>• Navigate between pages easily</li>
                 </ul>
               </div>
               <div className="space-y-2">
-                <h5 className="font-medium">Manage Roles</h5>
+                <h5 className="font-medium">User Operations</h5>
                 <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• Click &quot;Manage roles&quot; from the dropdown</li>
-                  <li>• Select/deselect roles using checkboxes</li>
-                  <li>• Multiple roles can be assigned</li>
-                  <li>• Role changes update instantly</li>
+                  <li>• View detailed user profiles</li>
+                  <li>• Edit user details and information</li>
+                  <li>• Manage role assignments</li>
+                  <li>• Suspend user accounts</li>
                 </ul>
+              </div>
+            </div>
+
+            <div className="space-y-4 mt-4">
+              <h4 className="font-semibold">User Editing Workflow:</h4>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <h5 className="font-medium">Edit User Details</h5>
+                  <ul className="text-sm space-y-1 text-muted-foreground">
+                    <li>• Click the dropdown menu (⋯) for any user</li>
+                    <li>• Select &quot;Edit user details&quot;</li>
+                    <li>• Update username and full name</li>
+                    <li>• Changes are saved immediately</li>
+                  </ul>
+                </div>
+                <div className="space-y-2">
+                  <h5 className="font-medium">Manage Roles</h5>
+                  <ul className="text-sm space-y-1 text-muted-foreground">
+                    <li>• Click &quot;Manage roles&quot; from the dropdown</li>
+                    <li>• Select/deselect roles using checkboxes</li>
+                    <li>• Multiple roles can be assigned</li>
+                    <li>• Role changes update instantly</li>
+                  </ul>
+                </div>
               </div>
             </div>
 
@@ -90,6 +118,16 @@ export default function UserManagementPage() {
                 <div><strong>Username:</strong> User&apos;s display name/handle</div>
                 <div><strong>Full Name:</strong> User&apos;s complete name</div>
                 <div><strong>Roles:</strong> System roles assigned to the user</div>
+              </div>
+            </div>
+
+            <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+              <h5 className="font-medium mb-2">Search Capabilities:</h5>
+              <div className="grid gap-2 text-sm">
+                <div><strong>Search Fields:</strong> Full name, username, roles, and user ID</div>
+                <div><strong>Real-time:</strong> Results filter instantly as you type</div>
+                <div><strong>Pagination:</strong> 10 users per page with navigation controls</div>
+                <div><strong>Smart Reset:</strong> Returns to page 1 when search changes</div>
               </div>
             </div>
           </CardContent>
@@ -138,6 +176,7 @@ VALUES ($1, $2), ($1, $3), ...`}
                 <li>• Admin role validation on every request</li>
                 <li>• Input validation and sanitization</li>
                 <li>• Real-time error handling and feedback</li>
+                <li>• Client-side filtering for performance</li>
               </ul>
             </div>
           </CardContent>
@@ -164,10 +203,12 @@ VALUES ($1, $2), ($1, $3), ...`}
               <div>
                 <h5 className="font-medium mb-2">UI Features:</h5>
                 <ul className="text-sm space-y-1 text-muted-foreground">
-                  <li>• Real-time toast notifications</li>
+                  <li>• Real-time search with instant filtering</li>
+                  <li>• Pagination with navigation controls</li>
                   <li>• Loading states during operations</li>
                   <li>• Form validation and error display</li>
                   <li>• Responsive design for all devices</li>
+                  <li>• Empty states for no results</li>
                 </ul>
               </div>
             </div>
